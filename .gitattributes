@@ -1,0 +1,4 @@
+# systemd unit files must never get Windows line endings:  breaks ExecStart.
+deploy/* text eol=lf
+*.py text eol=lf
+*.txt text eol=lf

@@ -1,0 +1,1 @@
+"""Report assembly: facts JSON, LLM writer, LLM verifier, rendering."""

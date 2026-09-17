@@ -1,0 +1,22 @@
+# Production schedule: last Monday of every month, 10:00 local time.
+# The report covers the running month up to that morning and compares it
+# with the previous, complete month (see jobs/monthly_report.py).
+#   sudo systemctl enable --now imidillo-report.timer
+#   systemctl list-timers imidillo-report.timer      # shows the NEXT run
+
+[Unit]
+Description=Imidillo monthly report: last Monday of the month, 10:00
+
+[Timer]
+# "~07/1" = the last 7 days of the month (counted from the end, step 1).
+# Exactly one Monday falls in any 7-day window, so this IS the last Monday.
+# Verify once on the box:
+#   systemd-analyze calendar 'Mon *-*~07/1 10:00:00'
+OnCalendar=Mon *-*~07/1 10:00:00
+
+# If the machine was off or asleep at 10:00, run as soon as it is back
+# instead of silently skipping the month.
+Persistent=true
+
+[Install]
+WantedBy=timers.target

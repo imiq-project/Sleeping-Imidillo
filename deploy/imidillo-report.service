@@ -1,0 +1,13 @@
+[Unit]
+Description=Imidillo sleeping agent: monthly city report email
+Wants=network-online.target
+After=network-online.target
+[Service]
+Type=oneshot
+WorkingDirectory=/opt/sleeping-imidillo
+ExecStart=/opt/sleeping-imidillo/.venv/bin/python -m jobs.monthly_report
+User=imidillo
+Environment=PYTHONUNBUFFERED=1
+# systemd kills the job if it runs longer than this.
+TimeoutStartSec=45min
+SuccessExitStatus=2

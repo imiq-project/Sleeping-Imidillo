@@ -1,0 +1,9 @@
+[Unit]
+Description=Imidillo report SMOKE TEST: every 10 minutes (disable after use)
+
+[Timer]
+OnCalendar=*:0/10
+Unit=imidillo-report.service
+
+[Install]
+WantedBy=timers.target
