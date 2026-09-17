@@ -18,7 +18,8 @@ previous month, data quality). Weather, air quality and traffic follow the same
 path: a module under `Statistical_models/` that returns a facts dict, added to
 `report/facts.py`.
 
-The Model Families;
+*The Model Families*
+
 1- **Rhythm model** :  Hourly value regressed on hour-of-day and a weekend flag, with autocorrelation-robust standard errors. It answers: what is the typical day, when is the peak, how different are weekends, did any of that change since last month. Same model, different variable, for parking occupancy, traffic counts, EV charger occupancy and pollutants.
 
 2- **Summary and threshold model**: Monthly descriptives (mean, extremes, percentiles), counts of threshold exceedances (EU air-quality limits, flood alert levels), and a proper month-on-month test. For weather, air-quality limits and river level.
