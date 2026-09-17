@@ -10,7 +10,7 @@ from dataclasses import dataclass, field
 from pathlib import Path
 
 import config
-from report.facts import load_facts
+from report.facts import load_facts, slim_facts
 from report.llm import complete
 from report.writer import INSTRUCTIONS as WRITER_INSTRUCTIONS, LANGUAGES
 
@@ -137,7 +137,7 @@ class Verification:
 
 
 def verify(facts: dict, draft: str, round_no: int = 0) -> Verification:
-    user_input = ("FACTS:\n" + json.dumps(facts, ensure_ascii=False, indent=1)
+    user_input = ("FACTS:\n" + json.dumps(slim_facts(facts), ensure_ascii=False, indent=1)
                   + "\n\nDRAFT:\n" + draft)
     raw = complete(INSTRUCTIONS, user_input, model=config.VERIFIER_MODEL,
                    label="verifier", json_schema=SCHEMA, schema_name="verification")
@@ -153,7 +153,7 @@ def revise(facts: dict, draft: str, v: Verification) -> str:
     """Send the flagged sentences back to the writer; everything else stays."""
     r = facts["report"]
     instructions = WRITER_INSTRUCTIONS.format(
-        month_label=r["month_label"], previous_month_label=r["previous_month_label"],
+        month_label=r["month_label"],
         language=LANGUAGES.get(config.REPORT_LANGUAGE, config.REPORT_LANGUAGE))
     problems = "\n".join(f'- "{i["claim"]}"\n  problem: {i["reason"]}' for i in v.unsupported)
     if v.untraced:
@@ -164,7 +164,7 @@ def revise(facts: dict, draft: str, v: Verification) -> str:
         "Keep every other sentence exactly as it was. Output the complete Markdown.\n"
         + problems
     )
-    return complete(instructions, "FACTS:\n" + json.dumps(facts, ensure_ascii=False, indent=1)
+    return complete(instructions, "FACTS:\n" + json.dumps(slim_facts(facts), ensure_ascii=False, indent=1)
                     + "\n\nPREVIOUS DRAFT:\n" + draft, model=config.WRITER_MODEL, label="writer-revise")
 
 

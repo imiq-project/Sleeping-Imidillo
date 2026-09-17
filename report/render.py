@@ -1,4 +1,24 @@
-# Render: approved report text -> everything the email needs.
+"""
+Render: approved report text -> everything the email needs.
+
+  charts      PNGs drawn from facts (never from the text): one figure per
+              data family (typical weekday profile + this month vs last),
+              and one 2x2 figure for the air-quality pollutants
+  html        the Markdown converted to email-safe HTML: inline styles only,
+              a 600px table layout, avatar and charts embedded by CID (the
+              one image mechanism Gmail and Outlook both show without a
+              "load images" prompt)
+  text        the Markdown itself, as the plain-text alternative
+  pdf         the same content through xhtml2pdf with a flowing (table-free)
+              layout, images embedded as base64
+
+render() returns a Rendered object; the mailer only has to send it.
+
+Run manually:
+    python -m report.render 2026-08     # needs output/2026-08/{facts.json,report.md}
+Writes report.html, report.pdf and chart_*.png next to them; open report.html
+in a browser to check the layout.
+"""
 
 from __future__ import annotations
 
@@ -15,6 +35,7 @@ import matplotlib
 
 matplotlib.use("Agg")                     # no display on the server
 import matplotlib.pyplot as plt           # noqa: E402
+import numpy as np                        # noqa: E402
 
 import config                             # noqa: E402
 from report.facts import load_facts       # noqa: E402
@@ -24,6 +45,8 @@ AVATAR_PATH = config.STATIC_DIR / "avatar-standing.png"
 BRAND = "#7a003f"                         # same dark magenta as the v1 emails
 GREY = "#b4b2a9"
 FONT = "-apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif"
+MAX_LINES = 6                             # more series than this -> grey lines + median
+MAX_BARS = 6                              # comparison bars: significant changes first
 
 
 @dataclass
@@ -50,54 +73,100 @@ def _tidy(ax):
     for side in ("top", "right"):
         ax.spines[side].set_visible(False)
     ax.grid(axis="y", alpha=0.3)
-    ax.tick_params(labelsize=8)
+    ax.tick_params(labelsize=7)
 
 
-def chart_profiles(facts: dict) -> bytes | None:
-    """Typical weekday occupancy by hour, one line per modelled lot."""
-    lots = facts["parking_patterns"]["lots"]
-    if not lots:
-        return None
-    fig, ax = plt.subplots(figsize=(6.4, 3.4))
-    for f in lots.values():
-        ys = [v if v is not None else float("nan") for v in f["profile_weekday_pct"]]
-        ax.plot(range(24), ys, marker="o", markersize=2.5, linewidth=1.6, label=f["name"])
+def _profile_panel(ax, fam: dict, title: str) -> bool:
+    """Typical weekday profile of every modelled series. Returns False if nothing to draw."""
+    series = fam["patterns"]["series"]
+    if not series:
+        ax.text(0.5, 0.5, "no usable series", ha="center", va="center", fontsize=9, color="#888",
+                transform=ax.transAxes)
+        ax.set_axis_off()
+        return False
+    hours = range(24)
+    profiles = {k: [v if v is not None else np.nan for v in s["profile_weekday"]] for k, s in series.items()}
+    if len(profiles) <= MAX_LINES:
+        for k, ys in profiles.items():
+            ax.plot(hours, ys, marker="o", markersize=2, linewidth=1.4, label=series[k]["name"])
+        ax.legend(fontsize=6, frameon=False)
+    else:
+        for ys in profiles.values():
+            ax.plot(hours, ys, color=GREY, linewidth=0.8, alpha=0.7)
+        stack = np.array(list(profiles.values()), dtype=float)
+        # median only where at least half of the sensors have a value; a lone
+        # night-time reading would otherwise draw a spike nobody measured
+        need = max(2, len(profiles) // 2)
+        median = np.array([np.nanmedian(col) if np.isfinite(col).sum() >= need else np.nan for col in stack.T])
+        ax.plot(hours, median, color=BRAND, linewidth=2.2, label=f"median of {len(profiles)} sensors")
+        ax.legend(fontsize=6, frameon=False)
     ax.set_xticks(range(0, 24, 3))
-    ax.set_xticklabels([f"{h:02d}:00" for h in range(0, 24, 3)])
-    ax.set_ylim(0, 100)
-    ax.set_ylabel("occupancy %", fontsize=8)
-    ax.set_title(f"Typical weekday, {facts['report']['month_label']} (local time)", fontsize=10)
-    ax.legend(fontsize=7, frameon=False)
+    ax.set_xticklabels([f"{h:02d}" for h in range(0, 24, 3)])
+    ax.set_ylabel(f"{fam['variable']} ({fam['unit']})", fontsize=7)
+    ax.set_title(title, fontsize=9)
+    if fam["unit"] == "%":
+        ax.set_ylim(0, 100)
     _tidy(ax)
+    return True
+
+
+def _comparison_panel(ax, fam: dict, title: str) -> bool:
+    """Mean per series, previous vs current month. Up to MAX_BARS series:
+    significant changes first, then the largest changes."""
+    comp = fam["comparison"]
+    rows = list(comp["series"].items())
+    if not rows:
+        ax.text(0.5, 0.5, "nothing to compare", ha="center", va="center", fontsize=9, color="#888",
+                transform=ax.transAxes)
+        ax.set_axis_off()
+        return False
+    rows.sort(key=lambda kv: (not kv[1]["adjusted_shift"]["significant"], -abs(kv[1]["adjusted_shift"]["delta"])))
+    rows = rows[:MAX_BARS]
+    names = [textwrap.fill(v["name"], 12) for _, v in rows]
+    prev = [v["mean"]["previous"] for _, v in rows]
+    cur = [v["mean"]["current"] for _, v in rows]
+    x = np.arange(len(rows))
+    w = 0.38
+    ax.bar(x - w / 2, prev, w, color=GREY, label=comp["previous_month_label"])
+    ax.bar(x + w / 2, cur, w, color=BRAND, label=comp["month_label"])
+    for i, (_, v) in enumerate(rows):
+        if v["adjusted_shift"]["significant"]:
+            ax.text(i, max(prev[i], cur[i]) * 1.02, "*", ha="center", fontsize=11, color=BRAND)
+    ax.set_xticks(x)
+    ax.set_xticklabels(names, fontsize=6, rotation=25 if len(rows) > 4 else 0,
+                       ha="right" if len(rows) > 4 else "center")
+    top = max(prev + cur) if prev + cur else 1
+    ax.set_ylim(0, top * 1.25)
+    ax.set_ylabel(f"mean {fam['variable']} ({fam['unit']})", fontsize=7)
+    ax.set_title(title, fontsize=9)
+    ax.legend(fontsize=6, frameon=False)
+    _tidy(ax)
+    return True
+
+
+def chart_family(fam: dict) -> bytes | None:
+    """Two panels: typical weekday profile, and this month vs last."""
+    if not fam["patterns"]["series"] and not fam["comparison"]["series"]:
+        return None
+    fig, (left, right) = plt.subplots(1, 2, figsize=(7.2, 3.2))
+    _profile_panel(left, fam, f"{fam['label']}: typical weekday ({fam['patterns']['month_label']})")
+    _comparison_panel(right, fam, "Mean by sensor  (* = significant change)")
     fig.tight_layout()
     return _png(fig)
 
 
-def chart_comparison(facts: dict) -> bytes | None:
-    """Mean occupancy, previous month vs report month, per compared lot."""
-    comp = facts["parking_comparison"]
-    lots = comp["lots"]
-    if not lots:
+def chart_air(families: dict) -> bytes | None:
+    """One panel per pollutant that has modelled stations."""
+    air = [(k, f) for k, f in families.items() if k.startswith("air_") and f["patterns"]["series"]]
+    if not air:
         return None
-    names = [textwrap.fill(v["name"], 16) for v in lots.values()]
-    prev = [v["mean_occ_pct"]["previous"] for v in lots.values()]
-    cur = [v["mean_occ_pct"]["current"] for v in lots.values()]
-    sig = [v["adjusted_shift"]["significant"] for v in lots.values()]
-    x = range(len(lots))
-    w = 0.38
-    fig, ax = plt.subplots(figsize=(6.4, 3.4))
-    ax.bar([i - w / 2 for i in x], prev, w, color=GREY, label=comp["previous_month_label"])
-    ax.bar([i + w / 2 for i in x], cur, w, color=BRAND, label=comp["month_label"])
-    for i, s in enumerate(sig):
-        if s:
-            ax.text(i, max(prev[i], cur[i]) + 2, "*", ha="center", fontsize=12, color=BRAND)
-    ax.set_xticks(list(x))
-    ax.set_xticklabels(names, fontsize=7)
-    ax.set_ylim(0, max(prev + cur) * 1.25 if prev + cur else 100)
-    ax.set_ylabel("mean occupancy %", fontsize=8)
-    ax.set_title("Mean occupancy by lot   (* = statistically significant change)", fontsize=10)
-    ax.legend(fontsize=7, frameon=False)
-    _tidy(ax)
+    cols = 2 if len(air) > 1 else 1
+    rows = (len(air) + cols - 1) // cols
+    fig, axes = plt.subplots(rows, cols, figsize=(7.2, 2.9 * rows), squeeze=False)
+    for ax, (k, fam) in zip(axes.flat, air):
+        _profile_panel(ax, fam, f"{fam['label']}: typical weekday")
+    for ax in list(axes.flat)[len(air):]:
+        ax.set_axis_off()
     fig.tight_layout()
     return _png(fig)
 
@@ -167,12 +236,10 @@ def _wrap(title: str, body: str, generated_at: str) -> str:
 
 def _wrap_pdf(title: str, body: str, generated_at: str) -> str:
     """PDF layout: the same body, but flowing divs instead of the email table.
-    xhtml2pdf cannot split a table row across pages, so the email layout
-    produced a near-empty first page with everything on page two."""
+    xhtml2pdf cannot split a table row across pages, and turns width:100%
+    images into zero-width boxes, so charts get an absolute width."""
     avatar = (f'<img src="cid:{AVATAR_CID}" alt="Imidillo" '
               f'style="width:52px;height:auto;margin-right:12px;">') if AVATAR_PATH.exists() else ""
-    # xhtml2pdf turns the email's width:100% images into zero-width boxes;
-    # give the charts an absolute width instead.
     body = re.sub(r'<p[^>]*><img src="cid:(chart-[^"]+)"[^>]*></p>',
                   r'<p style="margin:8pt 0 12pt 0;"><img src="cid:\1" style="width:16cm;"></p>', body)
     return f"""\
@@ -220,6 +287,7 @@ def build_pdf(html: str, inline_images: list[tuple[str, bytes, str]]) -> bytes |
 def render(facts: dict, report_md: str, with_pdf: bool = True) -> Rendered:
     r = facts["report"]
     subject = f"Imidillo report, {r['month_label']}"
+    fams = facts["families"]
 
     body = markdown_to_html(report_md)
     body = re.sub(r"<h1[^>]*>.*?</h1>\s*", "", body, count=1, flags=re.DOTALL)  # title lives in the header
@@ -230,14 +298,18 @@ def render(facts: dict, report_md: str, with_pdf: bool = True) -> Rendered:
     else:
         print(f"[RENDER] avatar not found at {AVATAR_PATH}, sending without it")
 
-    profiles = chart_profiles(facts)
-    if profiles:
-        inline.append(("chart-profiles", profiles, "image/png"))
-        body = _insert_before_heading(body, "Compared with", _img("chart-profiles", "Typical weekday occupancy by hour"))
-    comparison = chart_comparison(facts)
-    if comparison:
-        inline.append(("chart-comparison", comparison, "image/png"))
-        body = _insert_before_heading(body, "Data quality", _img("chart-comparison", "Mean occupancy, this month vs last"))
+    # one chart per family, placed at the end of that family's section
+    placements = [("parking", "chart-parking", "Traffic"), ("traffic", "chart-traffic", "Air quality")]
+    for key, cid, next_heading in placements:
+        if key in fams:
+            png = chart_family(fams[key])
+            if png:
+                inline.append((cid, png, "image/png"))
+                body = _insert_before_heading(body, next_heading, _img(cid, f"{fams[key]['label']} charts"))
+    air_png = chart_air(fams)
+    if air_png:
+        inline.append(("chart-air", air_png, "image/png"))
+        body = _insert_before_heading(body, "Data quality", _img("chart-air", "Air quality daily profiles"))
 
     html = _wrap(subject, body, r["generated_at"])
     attachments: list[tuple[str, bytes, str]] = []

@@ -74,9 +74,11 @@ def run(year: int, month: int, dry_run: bool = False, to: list[str] | None = Non
         t0 = time.perf_counter()
         facts = build_facts(year, month)
         save_facts(facts)
-        r, q = facts["report"], facts["data_quality"]["parking"]
-        _log("facts", f"{r['period_label']} ({r['days_covered']}/{r['days_in_month']} days), "
-                      f"{q['lots_usable']}/{q['lots_total']} parking lots usable", t0)
+        r = facts["report"]
+        usable = ", ".join(f"{k} {len(f['quality']['usable'])}/{f['quality']['total']}"
+                           for k, f in facts["families"].items())
+        _log("facts", f"{r['period_label']} ({r['days_covered']}/{r['days_in_month']} days); "
+                      f"usable sensors: {usable}; {len(facts['highlights'])} highlights", t0)
 
         # 2. write
         t0 = time.perf_counter()
