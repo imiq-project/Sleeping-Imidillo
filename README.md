@@ -25,3 +25,8 @@ path: a module under `Statistical_models/` that returns a facts dict, added to
 2- **Summary and threshold model**: Monthly descriptives (mean, extremes, percentiles), counts of threshold exceedances (EU air-quality limits, flood alert levels), and a proper month-on-month test. For weather, air-quality limits and river level.
 
 3- **Cross-sensor relationships**: The "correlations" across data entities. Raw hourly correlations are misleading because every sensor shares the same daily cycle, so we first remove the hour and weekday effects and correlate the residuals, with lags. Only significant relationships go into the report.
+
+
+*Too optimistic for now but included in the plan*
+
+1- Forcasting Models
