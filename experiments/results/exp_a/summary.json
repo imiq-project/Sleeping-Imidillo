@@ -1,0 +1,94 @@
+{
+  "by_error_type": {
+    "number": {
+      "n": 16,
+      "caught": 16,
+      "flagged": 16,
+      "tracer_only": 6,
+      "caught_or_tracer": 16,
+      "caught_rate": 1.0,
+      "flagged_rate": 1.0,
+      "tracer_rate": 0.375
+    },
+    "hour": {
+      "n": 16,
+      "caught": 16,
+      "flagged": 16,
+      "tracer_only": 0,
+      "caught_or_tracer": 16,
+      "caught_rate": 1.0,
+      "flagged_rate": 1.0,
+      "tracer_rate": 0.0
+    },
+    "significance": {
+      "n": 16,
+      "caught": 16,
+      "flagged": 16,
+      "tracer_only": 0,
+      "caught_or_tracer": 16,
+      "caught_rate": 1.0,
+      "flagged_rate": 1.0,
+      "tracer_rate": 0.0
+    },
+    "direction": {
+      "n": 16,
+      "caught": 16,
+      "flagged": 16,
+      "tracer_only": 0,
+      "caught_or_tracer": 16,
+      "caught_rate": 1.0,
+      "flagged_rate": 1.0,
+      "tracer_rate": 0.0
+    },
+    "cause": {
+      "n": 16,
+      "caught": 16,
+      "flagged": 16,
+      "tracer_only": 0,
+      "caught_or_tracer": 16,
+      "caught_rate": 1.0,
+      "flagged_rate": 1.0,
+      "tracer_rate": 0.0
+    },
+    "entity": {
+      "n": 16,
+      "caught": 16,
+      "flagged": 16,
+      "tracer_only": 0,
+      "caught_or_tracer": 16,
+      "caught_rate": 1.0,
+      "flagged_rate": 1.0,
+      "tracer_rate": 0.0
+    }
+  },
+  "total": {
+    "errors_n": 96,
+    "errors_caught": 96,
+    "errors_flagged": 96,
+    "errors_tracer": 6,
+    "controls_n": 32,
+    "controls_supported": 32,
+    "controls_unverifiable": 0,
+    "controls_false_alarm": 0,
+    "not_listed": 0,
+    "failed_calls": 0,
+    "median_seconds": 48.7,
+    "errors_caught_rate": 1.0,
+    "errors_flagged_rate": 1.0,
+    "errors_tracer_rate": 0.062,
+    "controls_false_alarm_rate": 0.0
+  },
+  "config": {
+    "months": [
+      "2026-08",
+      "2026-09"
+    ],
+    "seed": 20261007,
+    "per_type": 8,
+    "n_controls": 16,
+    "model": "gpt-5.4",
+    "reasoning": "high",
+    "run": "20261007-2323",
+    "templates": "v2"
+  }
+}

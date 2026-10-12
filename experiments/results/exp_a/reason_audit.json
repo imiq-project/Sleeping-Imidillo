@@ -1,0 +1,612 @@
+{
+  "by_type": {
+    "number": {
+      "caught": 16,
+      "right_reason": 16,
+      "unresolved": 0
+    },
+    "hour": {
+      "caught": 16,
+      "right_reason": 16,
+      "unresolved": 0
+    },
+    "significance": {
+      "caught": 16,
+      "right_reason": 16,
+      "unresolved": 0
+    },
+    "direction": {
+      "caught": 16,
+      "right_reason": 16,
+      "unresolved": 0
+    },
+    "cause": {
+      "caught": 16,
+      "right_reason": 16,
+      "unresolved": 0
+    },
+    "entity": {
+      "caught": 16,
+      "right_reason": 16,
+      "unresolved": 0
+    }
+  },
+  "rows": [
+    {
+      "id": "2026-08-003",
+      "type": "number",
+      "auto": true,
+      "right_reason": true
+    },
+    {
+      "id": "2026-08-008",
+      "type": "number",
+      "auto": true,
+      "right_reason": true
+    },
+    {
+      "id": "2026-08-002",
+      "type": "number",
+      "auto": true,
+      "right_reason": true
+    },
+    {
+      "id": "2026-08-006",
+      "type": "number",
+      "auto": true,
+      "right_reason": true
+    },
+    {
+      "id": "2026-08-001",
+      "type": "number",
+      "auto": true,
+      "right_reason": true
+    },
+    {
+      "id": "2026-08-011",
+      "type": "hour",
+      "auto": true,
+      "right_reason": true
+    },
+    {
+      "id": "2026-08-005",
+      "type": "number",
+      "auto": true,
+      "right_reason": true
+    },
+    {
+      "id": "2026-08-009",
+      "type": "hour",
+      "auto": true,
+      "right_reason": true
+    },
+    {
+      "id": "2026-08-004",
+      "type": "number",
+      "auto": true,
+      "right_reason": true
+    },
+    {
+      "id": "2026-08-007",
+      "type": "number",
+      "auto": true,
+      "right_reason": true
+    },
+    {
+      "id": "2026-08-010",
+      "type": "hour",
+      "auto": true,
+      "right_reason": true
+    },
+    {
+      "id": "2026-08-012",
+      "type": "hour",
+      "auto": true,
+      "right_reason": true
+    },
+    {
+      "id": "2026-08-013",
+      "type": "hour",
+      "auto": true,
+      "right_reason": true
+    },
+    {
+      "id": "2026-08-018",
+      "type": "significance",
+      "auto": true,
+      "right_reason": true
+    },
+    {
+      "id": "2026-08-017",
+      "type": "significance",
+      "auto": true,
+      "right_reason": true
+    },
+    {
+      "id": "2026-08-014",
+      "type": "hour",
+      "auto": true,
+      "right_reason": true
+    },
+    {
+      "id": "2026-08-020",
+      "type": "significance",
+      "auto": true,
+      "right_reason": true
+    },
+    {
+      "id": "2026-08-016",
+      "type": "hour",
+      "auto": true,
+      "right_reason": true
+    },
+    {
+      "id": "2026-08-015",
+      "type": "hour",
+      "auto": true,
+      "right_reason": true
+    },
+    {
+      "id": "2026-08-025",
+      "type": "significance",
+      "auto": true,
+      "right_reason": true
+    },
+    {
+      "id": "2026-08-028",
+      "type": "significance",
+      "auto": true,
+      "right_reason": true
+    },
+    {
+      "id": "2026-08-034",
+      "type": "direction",
+      "auto": true,
+      "right_reason": true
+    },
+    {
+      "id": "2026-08-035",
+      "type": "direction",
+      "auto": true,
+      "right_reason": true
+    },
+    {
+      "id": "2026-08-019",
+      "type": "significance",
+      "auto": true,
+      "right_reason": true
+    },
+    {
+      "id": "2026-08-032",
+      "type": "significance",
+      "auto": true,
+      "right_reason": true
+    },
+    {
+      "id": "2026-08-023",
+      "type": "significance",
+      "auto": true,
+      "right_reason": true
+    },
+    {
+      "id": "2026-08-038",
+      "type": "direction",
+      "auto": true,
+      "right_reason": true
+    },
+    {
+      "id": "2026-08-064",
+      "type": "cause",
+      "auto": true,
+      "right_reason": true
+    },
+    {
+      "id": "2026-08-033",
+      "type": "direction",
+      "auto": true,
+      "right_reason": true
+    },
+    {
+      "id": "2026-08-063",
+      "type": "cause",
+      "auto": true,
+      "right_reason": true
+    },
+    {
+      "id": "2026-08-050",
+      "type": "direction",
+      "auto": true,
+      "right_reason": true
+    },
+    {
+      "id": "2026-08-051",
+      "type": "direction",
+      "auto": true,
+      "right_reason": true
+    },
+    {
+      "id": "2026-08-036",
+      "type": "direction",
+      "auto": true,
+      "right_reason": true
+    },
+    {
+      "id": "2026-08-062",
+      "type": "direction",
+      "auto": true,
+      "right_reason": true
+    },
+    {
+      "id": "2026-08-070",
+      "type": "cause",
+      "auto": true,
+      "right_reason": true
+    },
+    {
+      "id": "2026-08-075",
+      "type": "entity",
+      "auto": true,
+      "right_reason": true
+    },
+    {
+      "id": "2026-08-067",
+      "type": "cause",
+      "auto": true,
+      "right_reason": true
+    },
+    {
+      "id": "2026-08-066",
+      "type": "cause",
+      "auto": true,
+      "right_reason": true
+    },
+    {
+      "id": "2026-08-069",
+      "type": "cause",
+      "auto": true,
+      "right_reason": true
+    },
+    {
+      "id": "2026-08-074",
+      "type": "entity",
+      "auto": true,
+      "right_reason": true
+    },
+    {
+      "id": "2026-08-073",
+      "type": "cause",
+      "auto": true,
+      "right_reason": true
+    },
+    {
+      "id": "2026-08-078",
+      "type": "entity",
+      "auto": null,
+      "right_reason": true
+    },
+    {
+      "id": "2026-08-077",
+      "type": "entity",
+      "auto": true,
+      "right_reason": true
+    },
+    {
+      "id": "2026-08-079",
+      "type": "entity",
+      "auto": null,
+      "right_reason": true
+    },
+    {
+      "id": "2026-08-072",
+      "type": "cause",
+      "auto": true,
+      "right_reason": true
+    },
+    {
+      "id": "2026-08-080",
+      "type": "entity",
+      "auto": true,
+      "right_reason": true
+    },
+    {
+      "id": "2026-08-081",
+      "type": "entity",
+      "auto": true,
+      "right_reason": true
+    },
+    {
+      "id": "2026-08-076",
+      "type": "entity",
+      "auto": true,
+      "right_reason": true
+    },
+    {
+      "id": "2026-09-001",
+      "type": "number",
+      "auto": true,
+      "right_reason": true
+    },
+    {
+      "id": "2026-09-002",
+      "type": "number",
+      "auto": true,
+      "right_reason": true
+    },
+    {
+      "id": "2026-09-006",
+      "type": "number",
+      "auto": true,
+      "right_reason": true
+    },
+    {
+      "id": "2026-09-005",
+      "type": "number",
+      "auto": true,
+      "right_reason": true
+    },
+    {
+      "id": "2026-09-003",
+      "type": "number",
+      "auto": true,
+      "right_reason": true
+    },
+    {
+      "id": "2026-09-004",
+      "type": "number",
+      "auto": true,
+      "right_reason": true
+    },
+    {
+      "id": "2026-09-007",
+      "type": "number",
+      "auto": true,
+      "right_reason": true
+    },
+    {
+      "id": "2026-09-010",
+      "type": "hour",
+      "auto": true,
+      "right_reason": true
+    },
+    {
+      "id": "2026-09-008",
+      "type": "number",
+      "auto": true,
+      "right_reason": true
+    },
+    {
+      "id": "2026-09-014",
+      "type": "hour",
+      "auto": true,
+      "right_reason": true
+    },
+    {
+      "id": "2026-09-009",
+      "type": "hour",
+      "auto": true,
+      "right_reason": true
+    },
+    {
+      "id": "2026-09-011",
+      "type": "hour",
+      "auto": true,
+      "right_reason": true
+    },
+    {
+      "id": "2026-09-013",
+      "type": "hour",
+      "auto": true,
+      "right_reason": true
+    },
+    {
+      "id": "2026-09-015",
+      "type": "hour",
+      "auto": true,
+      "right_reason": true
+    },
+    {
+      "id": "2026-09-017",
+      "type": "hour",
+      "auto": true,
+      "right_reason": true
+    },
+    {
+      "id": "2026-09-016",
+      "type": "hour",
+      "auto": true,
+      "right_reason": true
+    },
+    {
+      "id": "2026-09-021",
+      "type": "significance",
+      "auto": true,
+      "right_reason": true
+    },
+    {
+      "id": "2026-09-023",
+      "type": "significance",
+      "auto": true,
+      "right_reason": true
+    },
+    {
+      "id": "2026-09-019",
+      "type": "significance",
+      "auto": true,
+      "right_reason": true
+    },
+    {
+      "id": "2026-09-018",
+      "type": "significance",
+      "auto": true,
+      "right_reason": true
+    },
+    {
+      "id": "2026-09-020",
+      "type": "significance",
+      "auto": true,
+      "right_reason": true
+    },
+    {
+      "id": "2026-09-024",
+      "type": "significance",
+      "auto": true,
+      "right_reason": true
+    },
+    {
+      "id": "2026-09-022",
+      "type": "significance",
+      "auto": true,
+      "right_reason": true
+    },
+    {
+      "id": "2026-09-026",
+      "type": "direction",
+      "auto": true,
+      "right_reason": true
+    },
+    {
+      "id": "2026-09-030",
+      "type": "direction",
+      "auto": true,
+      "right_reason": true
+    },
+    {
+      "id": "2026-09-032",
+      "type": "direction",
+      "auto": true,
+      "right_reason": true
+    },
+    {
+      "id": "2026-09-027",
+      "type": "direction",
+      "auto": true,
+      "right_reason": true
+    },
+    {
+      "id": "2026-09-025",
+      "type": "significance",
+      "auto": true,
+      "right_reason": true
+    },
+    {
+      "id": "2026-09-034",
+      "type": "direction",
+      "auto": true,
+      "right_reason": true
+    },
+    {
+      "id": "2026-09-036",
+      "type": "direction",
+      "auto": true,
+      "right_reason": true
+    },
+    {
+      "id": "2026-09-056",
+      "type": "direction",
+      "auto": true,
+      "right_reason": true
+    },
+    {
+      "id": "2026-09-041",
+      "type": "direction",
+      "auto": true,
+      "right_reason": true
+    },
+    {
+      "id": "2026-09-057",
+      "type": "cause",
+      "auto": true,
+      "right_reason": true
+    },
+    {
+      "id": "2026-09-061",
+      "type": "cause",
+      "auto": true,
+      "right_reason": true
+    },
+    {
+      "id": "2026-09-058",
+      "type": "cause",
+      "auto": true,
+      "right_reason": true
+    },
+    {
+      "id": "2026-09-059",
+      "type": "cause",
+      "auto": true,
+      "right_reason": true
+    },
+    {
+      "id": "2026-09-062",
+      "type": "cause",
+      "auto": true,
+      "right_reason": true
+    },
+    {
+      "id": "2026-09-060",
+      "type": "cause",
+      "auto": true,
+      "right_reason": true
+    },
+    {
+      "id": "2026-09-064",
+      "type": "cause",
+      "auto": true,
+      "right_reason": true
+    },
+    {
+      "id": "2026-09-065",
+      "type": "entity",
+      "auto": true,
+      "right_reason": true
+    },
+    {
+      "id": "2026-09-063",
+      "type": "cause",
+      "auto": true,
+      "right_reason": true
+    },
+    {
+      "id": "2026-09-066",
+      "type": "entity",
+      "auto": true,
+      "right_reason": true
+    },
+    {
+      "id": "2026-09-070",
+      "type": "entity",
+      "auto": true,
+      "right_reason": true
+    },
+    {
+      "id": "2026-09-067",
+      "type": "entity",
+      "auto": null,
+      "right_reason": true
+    },
+    {
+      "id": "2026-09-068",
+      "type": "entity",
+      "auto": true,
+      "right_reason": true
+    },
+    {
+      "id": "2026-09-071",
+      "type": "entity",
+      "auto": true,
+      "right_reason": true
+    },
+    {
+      "id": "2026-09-072",
+      "type": "entity",
+      "auto": true,
+      "right_reason": true
+    },
+    {
+      "id": "2026-09-069",
+      "type": "entity",
+      "auto": null,
+      "right_reason": true
+    }
+  ]
+}

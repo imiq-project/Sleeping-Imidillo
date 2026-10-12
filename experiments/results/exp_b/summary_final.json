@@ -1,0 +1,74 @@
+{
+  "by_condition": {
+    "pipeline_draft": {
+      "n_claims": 187,
+      "supported": 186,
+      "unsupported": 1,
+      "unverifiable": 0,
+      "numbers": 388,
+      "words": 3150,
+      "untraced": 0,
+      "reports": 6,
+      "supported_rate": 0.995,
+      "unsupported_rate": 0.005,
+      "unverifiable_rate": 0.0,
+      "untraced_per_100_numbers": 0.0,
+      "unsupported_rate_per_report": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.036
+      ]
+    },
+    "pipeline_final": {
+      "n_claims": 187,
+      "supported": 187,
+      "unsupported": 0,
+      "unverifiable": 0,
+      "numbers": 392,
+      "words": 3158,
+      "untraced": 0,
+      "reports": 6,
+      "supported_rate": 1.0,
+      "unsupported_rate": 0.0,
+      "unverifiable_rate": 0.0,
+      "untraced_per_100_numbers": 0.0,
+      "unsupported_rate_per_report": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    "raw_v2": {
+      "n_claims": 190,
+      "supported": 67,
+      "unsupported": 96,
+      "unverifiable": 27,
+      "numbers": 286,
+      "words": 3224,
+      "untraced": 20,
+      "reports": 6,
+      "supported_rate": 0.353,
+      "unsupported_rate": 0.505,
+      "unverifiable_rate": 0.142,
+      "untraced_per_100_numbers": 7.0,
+      "unsupported_rate_per_report": [
+        0.429,
+        0.371,
+        0.517,
+        0.562,
+        0.515,
+        0.636
+      ]
+    }
+  },
+  "superseded": {
+    "raw": null
+  },
+  "note": "raw_v2 = raw with the staleness rule restricted to pollutants, as in the pipeline"
+}

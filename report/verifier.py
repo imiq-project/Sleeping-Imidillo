@@ -6,6 +6,7 @@ from __future__ import annotations
 import json
 import re
 import sys
+from concurrent.futures import ThreadPoolExecutor
 from dataclasses import dataclass, field
 from pathlib import Path
 
@@ -136,12 +137,43 @@ class Verification:
                 "stripped": self.stripped, "items": self.items}
 
 
-def verify(facts: dict, draft: str, round_no: int = 0) -> Verification:
-    user_input = ("FACTS:\n" + json.dumps(slim_facts(facts), ensure_ascii=False, indent=1)
-                  + "\n\nDRAFT:\n" + draft)
+def split_sections(draft: str) -> list[tuple[str, str]]:
+    """Markdown -> [(heading, text)], split at '## ' lines. The part before the
+    first '## ' (title + opening sentences) is the section 'Opening'."""
+    sections, title, lines = [], "Opening", []
+    for line in draft.splitlines():
+        if line.startswith("## "):
+            if any(l.strip() for l in lines):
+                sections.append((title, "\n".join(lines).strip()))
+            title, lines = line[3:].strip(), [line]
+        else:
+            lines.append(line)
+    if any(l.strip() for l in lines):
+        sections.append((title, "\n".join(lines).strip()))
+    return sections
+
+
+def _verify_section(facts_json: str, title: str, text: str) -> list[dict]:
+    user_input = (f"FACTS:\n{facts_json}\n\n"
+                  f'DRAFT SECTION "{title}" (one part of the report; check only this part, '
+                  f"but use all of FACTS):\n{text}")
     raw = complete(INSTRUCTIONS, user_input, model=config.VERIFIER_MODEL,
-                   label="verifier", json_schema=SCHEMA, schema_name="verification")
-    items = json.loads(raw)["items"]
+                   label=f"verifier:{title[:14]}", json_schema=SCHEMA, schema_name="verification")
+    return json.loads(raw)["items"]
+
+
+def verify(facts: dict, draft: str, round_no: int = 0) -> Verification:
+    """Check every section of the draft against the facts, sections in parallel.
+
+    One call for the whole report took ~3 min at reasoning "high" once EV
+    charging was added (2026-10-05) and hit the timeout. Per-section calls are
+    small and run side by side, so a round takes as long as the slowest section.
+    Every call still sees the full facts, so cross-section claims stay checkable."""
+    facts_json = json.dumps(slim_facts(facts), ensure_ascii=False, indent=1)
+    sections = split_sections(draft)
+    with ThreadPoolExecutor(max_workers=max(1, len(sections))) as pool:
+        results = list(pool.map(lambda st: _verify_section(facts_json, *st), sections))
+    items = [item for section_items in results for item in section_items]
     return Verification(items=items, untraced=untraced_numbers(draft, facts), round=round_no)
 
 

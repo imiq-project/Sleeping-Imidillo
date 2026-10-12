@@ -197,9 +197,21 @@ def _img(cid: str, alt: str) -> str:
             f'style="display:block;width:100%;max-width:600px;height:auto;border:1px solid #eee;"></p>')
 
 
+SECTION_ORDER = ["Highlights", "Parking", "EV charging", "Traffic", "Air quality", "Data quality"]
+
+
 def _insert_before_heading(html: str, heading_starts_with: str, block: str) -> str:
-    m = re.search(rf"<h2[^>]*>{re.escape(heading_starts_with)}", html)
-    return html[:m.start()] + block + html[m.start():] if m else html + block
+    """Insert block before the first h2 that starts with the given heading.
+    If the writer left that section out, fall back to the next section in
+    SECTION_ORDER, so a chart never drifts to the end of the email."""
+    tried = [heading_starts_with]
+    if heading_starts_with in SECTION_ORDER:
+        tried += SECTION_ORDER[SECTION_ORDER.index(heading_starts_with) + 1:]
+    for heading in tried:
+        m = re.search(rf"<h2[^>]*>{re.escape(heading)}", html)
+        if m:
+            return html[:m.start()] + block + html[m.start():]
+    return html + block
 
 
 def _wrap(title: str, body: str, generated_at: str) -> str:
@@ -299,7 +311,8 @@ def render(facts: dict, report_md: str, with_pdf: bool = True) -> Rendered:
         print(f"[RENDER] avatar not found at {AVATAR_PATH}, sending without it")
 
     # one chart per family, placed at the end of that family's section
-    placements = [("parking", "chart-parking", "Traffic"), ("traffic", "chart-traffic", "Air quality")]
+    placements = [("parking", "chart-parking", "EV charging"), ("ev_charging", "chart-ev", "Traffic"),
+                  ("traffic", "chart-traffic", "Air quality")]
     for key, cid, next_heading in placements:
         if key in fams:
             png = chart_family(fams[key])

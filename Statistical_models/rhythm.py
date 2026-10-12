@@ -167,6 +167,28 @@ def _pooled(frames: dict[str, pd.DataFrame]) -> dict | None:
 # Public: patterns for one month                                               #
 # --------------------------------------------------------------------------- #
 
+def _typical_day(modelled: dict[str, dict], decimals: int) -> dict | None:
+    """Median of the series' fitted weekday profiles, hour by hour: the family's
+    typical day. Lets the report say "lowest overnight, highest around noon"
+    about a whole family (18 chargers, 14 streets) with a number behind it.
+    An hour counts only if at least half of the series observed it."""
+    profiles = [s["profile_weekday"] for s in modelled.values()]
+    if len(profiles) < 2:
+        return None
+    arr = np.array([[np.nan if v is None else v for v in p] for p in profiles], dtype=float)
+    need = max(2, len(profiles) // 2)
+    median = [round(float(np.nanmedian(col)), decimals) if np.isfinite(col).sum() >= need else None
+              for col in arr.T]
+    known = [(h, v) for h, v in enumerate(median) if v is not None]
+    if not known:
+        return None
+    peak = max(known, key=lambda hv: hv[1])
+    trough = min(known, key=lambda hv: hv[1])
+    return {"n_series": len(profiles), "median_profile_weekday": median,
+            "peak_hour": peak[0], "peak_value": peak[1],
+            "trough_hour": trough[0], "trough_value": trough[1]}
+
+
 def analyse_rhythm(series: dict[str, RhythmSeries], *, year: int, month: int,
                    variable: str, unit: str, delta_unit: str, decimals: int = 1) -> dict:
     modelled, frames, skipped = {}, {}, {}
@@ -193,6 +215,7 @@ def analyse_rhythm(series: dict[str, RhythmSeries], *, year: int, month: int,
         "series": modelled,
         "skipped": skipped,
         "pooled": _pooled(frames),
+        "typical_day": _typical_day(modelled, decimals),
     }
 
 

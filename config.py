@@ -44,7 +44,7 @@ OPENAI_BASE_URL = _env("OPENAI_BASE_URL", "https://api.openai.com/v1")
 WRITER_MODEL = _env("WRITER_MODEL", "gpt-5.4")      
 VERIFIER_MODEL = _env("VERIFIER_MODEL", "gpt-5.4") 
 LLM_REASONING = _env("LLM_REASONING", "high")   
-LLM_TIMEOUT_S = _env_int("LLM_TIMEOUT_S", 180)
+LLM_TIMEOUT_S = _env_int("LLM_TIMEOUT_S", 600)   # writer ~2 min, verifier sections ~1-2 min at "high"
 # SMTP (the bot's own mailbox)                                         
 SMTP_HOST = _env("SMTP_HOST")
 SMTP_PORT = _env_int("SMTP_PORT", 587)   

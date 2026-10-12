@@ -31,8 +31,8 @@ You are writing the report for {month_label}.
 
 You receive one JSON document called FACTS. It is the only source of truth.
 Its parts: "report" (the period covered), "highlights" (the most notable facts,
-already ranked), "families" (one per data family: parking, traffic, air_no2,
-air_o3, air_pm10, air_pm25), each with "patterns" (this period), "comparison"
+already ranked), "families" (one per data family: parking, ev_charging, traffic,
+air_no2, air_o3, air_pm10, air_pm25), each with "patterns" (this period), "comparison"
 (versus the previous month), "quality" (what was excluded and why) and, for air
 quality, "thresholds" (health-limit exceedances). "glossary" explains the fields.
 
@@ -50,10 +50,12 @@ Rules:
 5. Use each family's "unit" for values and "delta_unit" for differences, and
    its "higher_means" / "lower_means" words for direction. Hours are local
    time, written like 11:00.
-6. Traffic has many sensors: say how many were usable, describe the typical
-   daily pattern and the weekend effect in general terms (use "pooled" and
-   the comparison "summary"), and name at most three streets with the most
-   notable results. Never list every sensor.
+6. EV charging and traffic have many sensors each: say how many were usable,
+   describe the typical daily pattern from "typical_day" and the weekend
+   effect in general terms (use "pooled" and the comparison "summary"), and name at most three
+   stations or streets with the most notable results. Never list every
+   sensor. For EV charging, "busy_all_points_pct" (share of time no point
+   was free) is the most useful number to quote for the busiest stations.
 7. Air quality: for each pollutant with usable stations, give the typical
    daily pattern, the weekend effect, whether any health limit was exceeded
    (say plainly when none was), and the change versus the previous month. For
@@ -79,11 +81,12 @@ Format: Markdown only, nothing before or after it.
   two or three opening sentences
   ## Highlights          3 to 5 bullets built from FACTS.highlights, most important first
   ## Parking
+  ## EV charging
   ## Traffic
   ## Air quality
   ## Data quality
   a one-line sign-off: Imidillo
-Short paragraphs and bullets. 500 to 800 words. Language: {language}.
+Short paragraphs and bullets. 600 to 900 words. Language: {language}.
 """
 
 

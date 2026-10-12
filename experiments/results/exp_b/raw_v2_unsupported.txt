@@ -1,0 +1,383 @@
+[0] 2026-08 r0 Parking
+  CLAIM: I could use Tiefgarage Allee Center, Elbauenpark - Messeparkplatz, Tiefgarage Friedensplatz, Tiefgarage Hotel Maritim and Tiefgarage Ulrichshaus.
+  WHY:   Allee-Center was excluded for 48.9% coverage below 60%, so only four parking lots were usable.
+
+[1] 2026-08 r0 Parking
+  CLAIM: The weekday parking pattern was quietest in the small hours, usually around 03:00 to 05:00, and busiest from late morning into early afternoon, most often around 11:00 to 13:00.
+  WHY:   FACTS gives the family typical weekday trough at 03:00 and peak at 12:00, not the broader 03:00–05:00 and 11:00–13:00 ranges.
+
+[2] 2026-08 r0 Parking
+  CLAIM: Tiefgarage Ulrichshaus showed that most clearly: on weekdays it often reached 77.4% to 87.2% around midday, while weekend midday values were more often around 46.2% to 52.8%.
+  WHY:   FACTS reports Ulrichshaus's weekday peak as 72.5% at 11:00 and weekend effect as -15.6 points, not the quoted midday ranges.
+
+[3] 2026-08 r0 Parking
+  CLAIM: Weekend and weekday differences were strongest at Elbauenpark - Messeparkplatz.
+  WHY:   The largest absolute weekend effect is Ulrichshaus at -15.6 points, while Elbauenpark - Messeparkplatz is +7.8 points.
+
+[4] 2026-08 r0 Parking
+  CLAIM: On many weekdays it sat roughly in the 16% to 45% range through the middle of the day, but on weekends it rose much higher, including 94.9% at 12:00 and 98.5% at 17:00 on 8 August, and 100.0% at 21:00 on 15 August.
+  WHY:   FACTS does not contain those dated occupancies; it only reports summaries such as a 36.0% typical weekday peak at 13:00 and a monthly max of 100.0%.
+
+[5] 2026-08 r0 Parking
+  CLAIM: Compared with July, it was fuller in August at comparable night and early-morning hours: early July often sat in the mid-teens to low 30s, while August was often around 40% to 55% in those hours.
+  WHY:   FACTS does show a significant +13.9 point adjusted shift, but it does not contain the quoted night and early-morning ranges.
+
+[6] 2026-08 r0 EV charging
+  CLAIM: I could use all 18 charging stations.
+  WHY:   FACTS say there were 18 stations in total, but only 15 were usable and 3 were excluded for coverage below 60%.
+
+[7] 2026-08 r0 Air quality
+  CLAIM: Weekend values were generally lower and flatter.
+  WHY:   Only City Tunnel and Guericke Strasse have significant lower weekend NO2, while Schleinufer and West do not, and FACTS gives no basis for 'flatter'.
+
+[8] 2026-08 r0 Air quality
+  CLAIM: The highest hourly value was 173 µg/m³ at 17:00 on 15 August.
+  WHY:   FACTS gives West's hourly maximum as 173.0 µg/m³ but does not give 17:00 on 15 August as the time of that hourly maximum.
+
+[9] 2026-08 r0 Air quality
+  CLAIM: I counted 10 August days above the WHO 8-hour guideline of 100 µg/m³ and 5 days above the EU 8-hour target of 120 µg/m³.
+  WHY:   FACTS says 15 days over the WHO 8-hour guideline and 7 days over the EU 8-hour target.
+
+[10] 2026-08 r0 Air quality
+  CLAIM: In July, those counts were 5 and 0, so August was clearly higher for ozone.
+  WHY:   FACTS does not provide July threshold counts, and the month-on-month ozone change at West is not significant.
+
+[11] 2026-08 r0 Air quality
+  CLAIM: Across NO2, I did not see a clear citywide change from July.
+  WHY:   FACTS shows three of four NO2 sites—City Tunnel, Guericke Strasse and West—were significantly higher than in July.
+
+[12] 2026-08 r1 Parking
+  CLAIM: At Friedensplatz, the quietest part of a typical weekday was late evening, around 22:00, when it was often in the low single digits to low teens.
+  WHY:   Friedensplatz's typical weekday trough is at 06:00 with 6.3%, not around 22:00.
+
+[13] 2026-08 r1 Parking
+  CLAIM: It then climbed through the morning and was usually busiest from 11:00 to 13:00, often around 50% to 70%.
+  WHY:   FACTS only shows a typical weekday peak at 12:00 of 51.2%, not a verified 11:00-13:00 busiest span at 50% to 70%.
+
+[14] 2026-08 r1 Parking
+  CLAIM: Ulrichshaus also built up through the morning and was usually busiest around 11:00 to 13:00, commonly around 75% to 85%, before easing back toward the mid-30s late in the evening.
+  WHY:   Ulrichshaus peaks at 11:00 at 72.5%, below the claimed 75% to 85%, and FACTS does not give a verified 11:00-13:00 busiest span.
+
+[15] 2026-08 r1 Parking
+  CLAIM: Elbauenpark - Messeparkplatz showed the opposite pattern: many weekday daytime hours sat roughly between 20% and 45%, while weekend peaks reached 94.9% at 12:00 on 08 August and 100.0% at 21:00 on 15 August.
+  WHY:   FACTS has no 94.9% value or those date-times; it shows a typical weekday peak of 36.0% at 13:00 and a max of 100.0%.
+
+[16] 2026-08 r1 Parking
+  CLAIM: Friedensplatz went the other way and was emptier late in the evening than in July.
+  WHY:   FACTS shows no significant month-to-month change at Friedensplatz; the adjusted shift is +0.8 points, not lower.
+
+[17] 2026-08 r1 EV charging
+  CLAIM: I could use all 18 charging stations.
+  WHY:   FACTS show 18 total stations, but only 15 were usable and 3 were excluded.
+
+[18] 2026-08 r1 EV charging
+  CLAIM: Activity then built from late morning into the evening.
+  WHY:   The weekday family profile peaks at 11:00 and does not keep building into the evening.
+
+[19] 2026-08 r1 EV charging
+  CLAIM: Hegelstraße 4 also spent long runs at 50.0% or 100.0%.
+  WHY:   FACTS show max 100.0% and 23.4% full-occupancy time, but no run-length metric or 50.0% run statistic.
+
+[20] 2026-08 r1 Air quality
+  CLAIM: Weekend levels were usually lower than weekday levels.
+  WHY:   Weekend NO2 is significantly lower at City Tunnel and Guericke Strasse, but Schleinufer and West do not show a significant weekend effect.
+
+[21] 2026-08 r1 Air quality
+  CLAIM: I did not see a clear month-wide change from July.
+  WHY:   FACTS show three of four NO2 sites—City Tunnel, Guericke Strasse and West—were significantly higher than July.
+
+[22] 2026-08 r1 Air quality
+  CLAIM: The WHO 8-hour guideline of 100 µg/m³ was exceeded on 10 days: 03, 04, 05, 09, 10, 12, 13, 14, 15 and 27 August.
+  WHY:   FACTS say the WHO 8-hour guideline was exceeded on 15 days, not 10.
+
+[23] 2026-08 r1 Air quality
+  CLAIM: The EU 8-hour target of 120 µg/m³ was exceeded on 5 days: 04, 09, 10, 14 and 15 August.
+  WHY:   FACTS say the EU 8-hour target was exceeded on 7 days, not 5.
+
+[24] 2026-08 r1 Air quality
+  CLAIM: Compared with July, the ozone peak was higher in August: 173 µg/m³ versus 151 µg/m³.
+  WHY:   The raw maximum was 173.0 versus 151.0, but FACTS mark West's month-on-month O3 change as not significant.
+
+[25] 2026-08 r2 Parking
+  CLAIM: On weekdays, these four lots together were quietest at 03:00 and busiest at 11:00.
+  WHY:   The pooled weekday profile is quietest at 03:00 and busiest at 12:00, not 11:00.
+
+[26] 2026-08 r2 Parking
+  CLAIM: The clearest weekday pattern was at Tiefgarage Ulrichshaus, which was often between 74.0% and 87.2% in the late morning and around midday, while Tiefgarage Friedensplatz stayed very low overnight, often between 2.2% and 11.4%.
+  WHY:   Ulrichshaus has the highest r_squared, but FACTS do not contain the quoted ranges; its weekday peak is 72.5% and Friedensplatz's overnight trough is 6.3%.
+
+[27] 2026-08 r2 Parking
+  CLAIM: It reached 86.7% on 8 August at 22:00, 100.0% on 15 August at 21:00, and 88.1% on 30 August at 19:00.
+  WHY:   FACTS only give aggregate summaries and do not contain the dated occupancies 86.7% or 88.1% or those timestamps.
+
+[28] 2026-08 r2 Parking
+  CLAIM: Compared with July, Tiefgarage Hotel Maritim was fuller overall in August, while Elbauenpark - Messeparkplatz was emptier overall.
+  WHY:   Hotel Maritim was significantly fuller, but Elbauenpark - Messeparkplatz showed no significant month-to-month change.
+
+[29] 2026-08 r2 EV charging
+  CLAIM: I used 18 stations.
+  WHY:   FACTS say there are 18 stations in total, but only 15 were usable and 3 were excluded.
+
+[30] 2026-08 r2 EV charging
+  CLAIM: A few stations stayed busy for long stretches, especially Breiter Weg 203, Hegelstraße 4, and Julius-Bremer-Straße 1, which often sat at 50.0% to 100.0% for several hours in a row.
+  WHY:   FACTS show peaks of 57.6%, 60.1%, and 60.9% and maxima of 100.0%, but do not report 50.0% or 'several hours in a row'.
+
+[31] 2026-08 r2 EV charging
+  CLAIM: Some stations were busier on weekend afternoons, while others stayed steadier on weekdays.
+  WHY:   FACTS report overall weekend effects by station, not afternoon-specific behavior, and they do not describe stations as 'steadier on weekdays'.
+
+[32] 2026-08 r2 Air quality
+  CLAIM: At the traffic-oriented NO2 sites, weekdays were usually more polluted than weekends through most daytime hours.
+  WHY:   City Tunnel and Guericke Strasse have significant negative weekend effects, but Schleinufer's weekend effect is -2.0 µg/m³ and not significant.
+
+[33] 2026-08 r2 Air quality
+  CLAIM: The clearest pattern was at City Tunnel, Guericke Strasse, and Schleinufer, where values rose after 07:00 and often again from late afternoon into the evening.
+  WHY:   FACTS give peak hours of 22:00, 09:00, and 23:00 for those sites but not hourly profiles to verify rises after 07:00 and again later.
+
+[34] 2026-08 r2 Air quality
+  CLAIM: For ozone, the pattern was the reverse.
+  WHY:   O3 West peaks at 18:00, but its weekend effect is -2.2 µg/m³ and not significant, so FACTS do not show a simple reverse of NO2.
+
+[35] 2026-08 r2 Air quality
+  CLAIM: O3 West was usually highest in the afternoon and evening, and weekend afternoons were often higher than weekday afternoons.
+  WHY:   West's O3 peak hour is 18:00, but its weekend effect is -2.2 µg/m³ and not significant.
+
+[36] 2026-08 r2 Air quality
+  CLAIM: The highest hourly value was 173.0 µg/m³ at 17:00 on 15 August.
+  WHY:   FACTS confirm a max of 173.0 µg/m³ but do not give the hourly-maximum timestamp; the only 15 August time shown is the 8-hour worst_when at 00:00.
+
+[37] 2026-08 r2 Air quality
+  CLAIM: The 8-hour ozone value went above the WHO 100 µg/m³ guideline on 9 days and above the EU 120 µg/m³ target on 5 days.
+  WHY:   FACTS say 15 WHO-guideline exceedance days and 7 EU-target exceedance days.
+
+[38] 2026-08 r2 Air quality
+  CLAIM: That was more than in July, when I saw 5 WHO exceedance days and no EU-target exceedance day.
+  WHY:   FACTS include August ozone exceedance counts only, not July exceedance-day counts.
+
+[39] 2026-08 r2 Air quality
+  CLAIM: I did not describe particulate pollution this month, because the particle sensors were not reliable enough.
+  WHY:   FACTS say all PM10 and PM2.5 series were excluded as stale, not that the sensors were generally 'not reliable enough'.
+
+[40] 2026-09 r0 Parking
+  CLAIM: I could rely on five of the nine lots: Elbauenpark - Messeparkplatz, Tiefgarage Friedensplatz, Tiefgarage Hotel Maritim, Parkhaus Hotel Ratswaage and Tiefgarage Universitätsplatz.
+  WHY:   FACTS says 4 of 9 lots were usable—Elbauenpark - Messeparkplatz, Tiefgarage Friedensplatz, Tiefgarage Hotel Maritim and Tiefgarage Ulrichshaus—while Hotel-Ratswaage and Universitaetsplatz had no data.
+
+[41] 2026-09 r0 Parking
+  CLAIM: The clearest weekday rhythm was at Tiefgarage Universitätsplatz.
+  WHY:   Universitaetsplatz was skipped for no data, and the strongest modelled weekday rhythm is at Ulrichshaus (r_squared 0.787).
+
+[42] 2026-09 r0 Parking
+  CLAIM: It was quietest in the small hours, mostly around 33% to 39% at 03:00 to 05:00, then climbed through the morning and was usually fullest around 10:00 to 12:00, often between 77.1% and 86.7%.
+  WHY:   FACTS has no modelled Universitaetsplatz data and does not contain the cited hourly percentages.
+
+[43] 2026-09 r0 Parking
+  CLAIM: Tiefgarage Friedensplatz showed a similar shape: low in the late evening and overnight, then strongest around 10:00 to 12:00, with weekday peaks such as 83.3% on 1 September, 82.5% on 10 September and 77.2% on 29 September.
+  WHY:   FACTS shows a typical weekday trough at 03:00 and peak at 12:00, but it does not contain the cited date-specific percentages.
+
+[44] 2026-09 r0 Parking
+  CLAIM: Tiefgarage Universitätsplatz was clearly less full on weekend middays than on weekdays.
+  WHY:   Universitaetsplatz was skipped for no data, so FACTS does not show any weekend effect for it.
+
+[45] 2026-09 r0 Parking
+  CLAIM: On Sundays, it was around 36.5% to 39.9% from 10:00 to 13:00 on 20 and 27 September, while weekday late-morning values were much higher.
+  WHY:   FACTS has no modelled Universitaetsplatz data and does not contain those date-specific Sunday percentages.
+
+[46] 2026-09 r0 Parking
+  CLAIM: Tiefgarage Friedensplatz also ran lower on Sundays: on 20 September it was just 1.3% at 11:00 and 8.8% at 12:00.
+  WHY:   FACTS shows Friedensplatz's weekend effect is -8.6 points but not significant, and it does not contain the cited 20 September hourly percentages.
+
+[47] 2026-09 r0 Parking
+  CLAIM: The exception was Elbauenpark - Messeparkplatz.
+  WHY:   FACTS does not confirm Elbauenpark as a clear exception: its weekend effect is +6.8 points but not significant.
+
+[48] 2026-09 r0 Parking
+  CLAIM: Its weekday pattern was irregular, but its weekend peaks were unmistakable.
+  WHY:   FACTS shows a low-fit weekday pattern (r_squared 0.25), but its weekend effect is not significant.
+
+[49] 2026-09 r0 Parking
+  CLAIM: It reached 97.8% at 11:00 on Saturday 19 September, 98.6% at 11:00 on Sunday 20 September, and 81.1% at 13:00 on Saturday 26 September.
+  WHY:   FACTS gives only summary values for Elbauenpark, with a typical weekday peak of 38.4% at 11:00 and max 100.0%, not those date-specific figures.
+
+[50] 2026-09 r0 Parking
+  CLAIM: The weekday late-morning peak at Universitätsplatz and Friedensplatz remained, and Elbauenpark - Messeparkplatz remained the lot with the strongest weekend surges.
+  WHY:   Universitaetsplatz was not comparable, Friedensplatz keeps a 12:00 peak, and Elbauenpark's current weekend effect is +6.8 points but not significant.
+
+[51] 2026-09 r0 EV charging
+  CLAIM: I could use 16 charging stations this month.
+  WHY:   FACTS list 17 usable charging stations this month, not 16.
+
+[52] 2026-09 r0 EV charging
+  CLAIM: Occupancy was usually lowest overnight, started to rise after 08:00, and was strongest from about 10:00 to 18:00.
+  WHY:   The typical weekday profile is lowest overnight, but it is already rising by 07:00 and 08:00, not only after 08:00.
+
+[53] 2026-09 r0 EV charging
+  CLAIM: Long runs at 50% or 100% were common at some stations, and that fits these reconstructed charging states.
+  WHY:   FACTS do not record run lengths at 50% or 100%, and the explanation about reconstructed charging states is not stated in FACTS.
+
+[54] 2026-09 r0 Air quality
+  CLAIM: For the WHO daily mean NO2 guideline of 25, I saw exceedances on some days at City Tunnel, and on fewer days at Guericke Strasse and Schleinufer.
+  WHY:   City Tunnel and Schleinufer each had 11 exceedance days, while Guericke Strasse had 8, so Schleinufer was not on fewer days than City Tunnel.
+
+[55] 2026-09 r0 Air quality
+  CLAIM: I did not see that at West.
+  WHY:   West had 1 day over the WHO daily NO2 guideline.
+
+[56] 2026-09 r0 Air quality
+  CLAIM: The monthly high was 120 at 18:00 on 28 September.
+  WHY:   FACTS gives a monthly O3 maximum of 120.0 but does not say it occurred at 18:00 on 28 September.
+
+[57] 2026-09 r0 Air quality
+  CLAIM: The WHO 8-hour O3 guideline of 100 was exceeded on 27 and 30 September.
+  WHY:   FACTS says the WHO 8-hour O3 guideline was exceeded on 4 days, not just on 27 and 30 September, and does not list all exceedance dates.
+
+[58] 2026-09 r1 Parking
+  CLAIM: I could use four parking lots: Elbauenpark - Messeparkplatz, Tiefgarage Friedensplatz, Tiefgarage Hotel Maritim, and Tiefgarage Universitätsplatz.
+  WHY:   FACTS say the four usable lots were Elbauenpark - Messeparkplatz, Tiefgarage Friedensplatz, Tiefgarage Hotel Maritim, and Tiefgarage Ulrichshaus; Universitaetsplatz had no data.
+
+[59] 2026-09 r1 Parking
+  CLAIM: Tiefgarage Friedensplatz was quietest around 03:00 to 05:00, usually at 4.4% to 7.0%, then busiest from 10:00 to 12:00, often between 55.3% and 86.8%.
+  WHY:   FACTS only show a trough of 6.5% at 03:00 and a peak of 58.1% at 12:00, not the quoted hourly ranges.
+
+[60] 2026-09 r1 Parking
+  CLAIM: Tiefgarage Universitätsplatz followed the same shape but at a much fuller level: around 33% to 35% in the early morning, then commonly 77.9% to 86.7% between 10:00 and 12:00.
+  WHY:   FACTS say Universitaetsplatz had no data in this window and was not modelled.
+
+[61] 2026-09 r1 Parking
+  CLAIM: Tiefgarage Universitätsplatz was clearly fuller on weekdays than on weekends.
+  WHY:   FACTS say Universitaetsplatz had no data in this window and was not modelled.
+
+[62] 2026-09 r1 Parking
+  CLAIM: Its late-morning Saturday values were mostly around 44.4% to 53.2%, and Sunday values were often around 36.5% to 40.0%, well below weekday late-morning levels.
+  WHY:   FACTS say Universitaetsplatz had no data in this window and do not contain these hourly ranges.
+
+[63] 2026-09 r1 Parking
+  CLAIM: Elbauenpark - Messeparkplatz showed the opposite pattern.
+  WHY:   FACTS show a weekend effect of +6.8 points for Elbauenpark, but significant is false, so there was no measurable opposite pattern.
+
+[64] 2026-09 r1 Parking
+  CLAIM: On many weekdays it stayed roughly between 15% and 52% through the day, but weekend midday values were often much higher, including 71.1% at 10:00 and 97.8% at 11:00 on 19 September, and 73.0% at 10:00 and 98.6% at 11:00 on 20 September.
+  WHY:   FACTS do not contain those dated hourly values, and Elbauenpark's weekend effect is not significant.
+
+[65] 2026-09 r1 Parking
+  CLAIM: I did not see a measurable month-to-month shift in the regular weekday pattern.
+  WHY:   FACTS show Friedensplatz was significantly fuller than in August, with an adjusted shift of +4.1 percentage points.
+
+[66] 2026-09 r1 EV charging
+  CLAIM: The quietest hours were overnight, especially from 00:00 to 06:00, when many stations sat at 0% or 50%.
+  WHY:   FACTS show the weekday trough is overnight, but they do not say many stations were at 0% or 50% in that period.
+
+[67] 2026-09 r1 EV charging
+  CLAIM: That broad shape looked much like August, so I did not see a measurable citywide shift.
+  WHY:   FACTS do not provide a citywide August-vs-September shift, and they actually show 4 stations significantly higher and 1 significantly lower month on month.
+
+[68] 2026-09 r1 EV charging
+  CLAIM: Hegelstraße 4 was often full at 100%, including 00:00 to 07:00 on 16 September and 00:00 to 06:00 on 28 September.
+  WHY:   FACTS show Hegelstraße 4 reached 100% and was full 34.5% of known time, but not those specific date-and-hour stretches.
+
+[69] 2026-09 r1 EV charging
+  CLAIM: Breiter Weg 203 frequently reached 100% in daytime, for example from 11:00 to 23:00 on 11 September.
+  WHY:   FACTS show Breiter Weg 203 reached 100% and was full 19.7% of known time, but not that specific 11 September interval.
+
+[70] 2026-09 r1 EV charging
+  CLAIM: Liebknechtstraße 37 was one of the busiest evening sites and stayed at 100% from 17:00 to 23:00 on 8 September.
+  WHY:   FACTS show Liebknechtstraße 37 reached 100% and peaked at 12:00, but they do not report that 8 September evening stretch or rank it among the busiest evening sites.
+
+[71] 2026-09 r1 EV charging
+  CLAIM: On weekends I still saw busy midday and evening periods at several stations, so weekend charging was not broadly quieter.
+  WHY:   FACTS do not report those specific weekend midday/evening periods, and weekend effects are mixed rather than a direct network-wide 'not quieter' result.
+
+[72] 2026-09 r1 Air quality
+  CLAIM: I did not see that at West.
+  WHY:   West had 1 day above the WHO daily guideline.
+
+[73] 2026-09 r1 Air quality
+  CLAIM: The monthly maximum was 120 µg/m³ at 18:00 on 28 September.
+  WHY:   FACTS give West O3's monthly maximum as 120.0, but do not provide the date and time of that hourly maximum.
+
+[74] 2026-09 r1 Air quality
+  CLAIM: I did see 8-hour averages above the WHO 100 µg/m³ guideline late in the month, including the 14:00 to 21:00 periods on 27 and 30 September.
+  WHY:   FACTS show 4 days above the WHO 8-hour guideline but do not list these specific 14:00–21:00 periods or both dates.
+
+[75] 2026-09 r2 Parking
+  CLAIM: I could use Elbauenpark - Messeparkplatz, Tiefgarage Friedensplatz, Tiefgarage Hotel Maritim and Tiefgarage Universitätsplatz.
+  WHY:   The usable parking lots are Elbauenpark - Messeparkplatz, Tiefgarage Friedensplatz, Tiefgarage Hotel Maritim and Tiefgarage Ulrichshaus; Universitaetsplatz had no data in this window.
+
+[76] 2026-09 r2 Parking
+  CLAIM: On weekdays, Tiefgarage Universitätsplatz showed the clearest workday shape.
+  WHY:   FACTS has no usable parking series named Tiefgarage Universitätsplatz; the strongest fitted weekday pattern among usable lots is Ulrichshaus (r_squared 0.787).
+
+[77] 2026-09 r2 Parking
+  CLAIM: It was quietest around 03:00 to 05:00, usually close to 34%, and busiest around 11:00, often around 78% to 86%.
+  WHY:   There is no parking series for Universitätsplatz; the usable lot Ulrichshaus bottoms at 34.4% at 04:00 and peaks at 75.0% at 11:00, not 78% to 86%.
+
+[78] 2026-09 r2 Parking
+  CLAIM: Tiefgarage Friedensplatz followed a similar shape: very low around 03:00 to 05:00 at 4.4% to 7.0%, then fullest in late morning, often between about 58% and 83.3%.
+  WHY:   FACTS gives Friedensplatz a trough of 6.5% at 03:00 and a weekday peak of 58.1% at 12:00; 4.4%, 7.0% and 83.3% are not values in FACTS.
+
+[79] 2026-09 r2 Parking
+  CLAIM: Tiefgarage Universitätsplatz was usually less full on weekend late mornings than on weekdays: many weekday 10:00 to 12:00 values were in the mid-70s to mid-80s, while Saturday 19 September reached only 45.8% at 10:00 and 49.6% at 12:00, and Sunday 20 September stayed around 36.5% to 38.2% from 11:00 to 13:00.
+  WHY:   Universitaetsplatz is excluded for no data, and the dated hourly values 45.8%, 49.6%, 36.5% and 38.2% are not in FACTS.
+
+[80] 2026-09 r2 Parking
+  CLAIM: Elbauenpark - Messeparkplatz showed the opposite pattern.
+  WHY:   Elbauenpark's weekend effect is +6.8 points, but FACTS marks it not significant, so there is no supported opposite pattern.
+
+[81] 2026-09 r2 Parking
+  CLAIM: Many weekday late mornings sat roughly between 28% and 52%, but it reached 97.8% on Saturday 19 September at 11:00 and 98.6% on Sunday 20 September at 11:00.
+  WHY:   FACTS gives only aggregated values such as a weekday peak of 38.4% at 11:00 and a monthly max of 100.0%, not those dated 97.8% and 98.6% readings.
+
+[82] 2026-09 r2 Parking
+  CLAIM: Compared with August, I did not see a clear month-to-month change at Elbauenpark - Messeparkplatz, Tiefgarage Friedensplatz or Tiefgarage Universitätsplatz.
+  WHY:   Friedensplatz was significantly higher month on month, while Universitaetsplatz was not modelled in either month.
+
+[83] 2026-09 r2 Parking
+  CLAIM: Their weekday shapes stayed broadly the same.
+  WHY:   FACTS shows Friedensplatz had a significant positive adjusted shift and Universitaetsplatz was not modelled, so this grouped claim is not supported.
+
+[84] 2026-09 r2 Parking
+  CLAIM: Tiefgarage Hotel Maritim changed the most inside September itself: it was still at 88.0% on 9 September at 11:00, but dropped to 0.0% on 20 September at 11:00 and then stayed mostly below 30% for several days before rising again late in the month.
+  WHY:   FACTS only gives Hotel Maritim's monthly min/max and typical peak/trough, not the dated 11:00 readings or the claimed several-day run below 30%.
+
+[85] 2026-09 r2 EV charging
+  CLAIM: I could use 16 stations reliably this month.
+  WHY:   FACTS lists 17 usable EV charging stations this month, with 1 excluded.
+
+[86] 2026-09 r2 EV charging
+  CLAIM: Hegelstraße 4 was occupied for long stretches, often at 50% or 100%, including many night hours.
+  WHY:   FACTS shows mean 53.9%, full occupancy 34.5% of known time, a 05:00 trough of 37.8%, and max 100.0%, but not 'often at 50%' or 'long stretches'.
+
+[87] 2026-09 r2 EV charging
+  CLAIM: Breiter Weg 203 was often full in daytime.
+  WHY:   FACTS shows a 10:00 peak of 62.6% and full occupancy 19.7% of known time, but not that it was often full specifically in daytime.
+
+[88] 2026-09 r2 EV charging
+  CLAIM: Liebknechtstraße 37 also had many very busy weekday daytime and evening hours, including repeated 100% readings.
+  WHY:   FACTS shows mean 29.7%, a 12:00 peak of 44.9%, max 100.0%, and full occupancy 15.3% of known time, but not repeated 100% readings or many very busy daytime and evening hours.
+
+[89] 2026-09 r2 Air quality
+  CLAIM: For NO2, the typical weekday pattern was lowest around 04:00 to 05:00 and highest around 08:00 to 10:00, with another rise later in the day at the roadside sites.
+  WHY:   The family NO2 weekday profile bottoms at 04:00 and peaks at 21:00, while the individual site peaks are 17:00, 22:00, 20:00 and 08:00.
+
+[90] 2026-09 r2 Air quality
+  CLAIM: Weekends were generally less polluted than weekdays, especially in the morning.
+  WHY:   Only Guericke Strasse and Schleinufer have significant weekend reductions; City Tunnel and West do not, and morning-specific weekend patterns are not reported.
+
+[91] 2026-09 r2 Air quality
+  CLAIM: At Schleinufer, many weekday 07:00 to 09:00 values were around 30 to 45, while several weekend mornings stayed in single digits or the low teens.
+  WHY:   FACTS do not provide Schleinufer weekday/weekend hour-by-hour NO2 values or the 07:00–09:00 ranges stated.
+
+[92] 2026-09 r2 Air quality
+  CLAIM: At West, I did not see a daily mean above 25.
+  WHY:   West had 1 day above 25, with a worst daily mean of 26.1.
+
+[93] 2026-09 r2 Air quality
+  CLAIM: For ozone at West, the highest hourly value was 120 on 28 September at 18:00.
+  WHY:   FACTS give the hourly maximum as 120, but the reported timestamp is for the 8-hour mean, not the hourly maximum.
+
+[94] 2026-09 r2 Air quality
+  CLAIM: The WHO 8-hour guideline of 100 was exceeded on 27 September and 30 September.
+  WHY:   FACTS show 4 WHO 8-hour exceedance days and the worst on 2026-09-29, but not exceedances specifically on 27 or 30 September.
+
+[95] 2026-09 r2 Air quality
+  CLAIM: Compared with August, high-ozone periods were less frequent: August had several 8-hour periods above 120, while September had none.
+  WHY:   FACTS show September ozone was significantly lower and had 0 EU 8-hour target exceedance days, but they do not report August 8-hour exceedance counts.

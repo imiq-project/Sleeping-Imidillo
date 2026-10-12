@@ -207,6 +207,23 @@ def check_air(year: int, month: int):
     return f"NO2 usable {no2_usable}; O3 {list(fam['o3'])}; stale excluded: {len(stale)}"
 
 
+@step("6e data/ev_charging.py")
+def check_ev(year: int, month: int):
+    from data.ev_charging import prepare_ev_charging
+    from data.timewindow import month_window
+    stations = prepare_ev_charging(*month_window(year, month))
+    assert len(stations) >= 15, f"only {len(stations)} EV stations"
+    usable = [k for k, s in stations.items() if s.usable]
+    assert len(usable) >= 5, f"only {len(usable)} usable stations"
+    _check_series(stations, 0, 100, "ev")
+    for k in usable:
+        s = stations[k]
+        assert s.meta["capacity"] > 0 and s.meta["state_changes"] >= 10, k
+        # forward-filled state: most hours known, unlike the change rows alone
+        assert s.coverage["coverage_pct"] >= 60, f"{k}: coverage {s.coverage['coverage_pct']}"
+    return f"{len(usable)}/{len(stations)} usable; state carried forward between changes"
+
+
 # --------------------------------------------------------------------------- #
 # 7-8: the rhythm model on parking                                             #
 # --------------------------------------------------------------------------- #
@@ -263,11 +280,15 @@ def check_facts(year: int, month: int):
     for section in ("report", "highlights", "families", "glossary"):
         assert section in facts, f"section {section} missing"
     fams = facts["families"]
-    for key in ("parking", "traffic", "air_no2", "air_o3", "air_pm10", "air_pm25"):
+    for key in ("parking", "ev_charging", "traffic", "air_no2", "air_o3", "air_pm10", "air_pm25"):
         assert key in fams, f"family {key} missing"
         for part in ("patterns", "comparison", "quality", "unit", "delta_unit", "higher_means"):
             assert part in fams[key], f"{key}.{part} missing"
     assert "thresholds" in fams["air_no2"]
+    for key in ("ev_charging", "traffic"):
+        td = fams[key]["patterns"]["typical_day"]
+        assert td and len(td["median_profile_weekday"]) == 24 and 0 <= td["peak_hour"] <= 23, f"{key}: typical_day"
+    assert facts["report"]["city"] == "Magdeburg"
     assert len(fams["parking"]["patterns"]["series"]) >= 3 and len(fams["traffic"]["patterns"]["series"]) >= 5
     assert isinstance(facts["highlights"], list)
     path = save_facts(facts)
@@ -293,11 +314,11 @@ def check_writer(month: str):
     facts = load_facts(month)
     text = write_report(facts)
     assert text.startswith("# Imidillo report"), "draft must start with the title line"
-    for heading in ("## Highlights", "## Parking", "## Traffic", "## Air quality", "## Data quality"):
+    for heading in ("## Highlights", "## Parking", "## EV charging", "## Traffic", "## Air quality", "## Data quality"):
         assert heading in text, f"missing section {heading!r}"
     assert "p-value" not in text.lower() and "p =" not in text, "draft must not quote p-values"
     words = len(text.split())
-    assert 300 <= words <= 1100, f"{words} words, outside 300-1100"
+    assert 300 <= words <= 1300, f"{words} words, outside 300-1300"
     unknown = untraced_numbers(text, facts)
     assert not unknown, f"numbers not present in facts: {unknown}"
     path = save_draft(text, month)
@@ -340,12 +361,12 @@ def check_render(month: str):
     else:
         r = facts["report"]
         report_md, source = (f"# Imidillo report, {r['month_label']}\n\nStub.\n\n## Highlights\n- h\n\n"
-                             f"## Parking\n- p\n\n## Traffic\n- t\n\n## Air quality\n- a\n\n"
+                             f"## Parking\n- p\n\n## EV charging\n- e\n\n## Traffic\n- t\n\n## Air quality\n- a\n\n"
                              f"## Data quality\n- q\n\nImidillo\n"), "stub"
     rendered = render(facts, report_md, with_pdf=True)
     assert rendered.subject.startswith("Imidillo report, ")
     cids = [cid for cid, _, _ in rendered.inline_images]
-    assert "chart-parking" in cids and "chart-traffic" in cids, f"charts missing: {cids}"
+    assert {"chart-parking", "chart-ev", "chart-traffic"} <= set(cids), f"charts missing: {cids}"
     for cid in cids:
         assert f"cid:{cid}" in rendered.html, f"{cid} embedded but not referenced"
     assert rendered.html.count("<h1") == 1, "title must appear exactly once"
@@ -425,6 +446,7 @@ def main() -> int:
     check_parking(year, month)
     check_traffic(year, month)
     check_air(year, month)
+    check_ev(year, month)
     check_rhythm(year, month)
     check_compare(year, month)
     check_facts(year, month)

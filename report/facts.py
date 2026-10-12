@@ -15,7 +15,7 @@ Structure:
                   comparison (Statistical_models.rhythm.compare_rhythm)
                   quality    (usable / excluded / silent / notes)
                   thresholds (air quality only: limit exceedances)
-                Families today: parking, traffic, air_no2, air_o3, air_pm10, air_pm25
+                Families today: parking, ev_charging, traffic, air_no2, air_o3, air_pm10, air_pm25
   glossary      meaning of the recurring field names
 
 Run manually:
@@ -32,7 +32,7 @@ from pathlib import Path
 from zoneinfo import ZoneInfo
 
 import config
-from data import air_quality, parking, traffic
+from data import air_quality, ev_charging, parking, traffic
 from data.timewindow import (
     days_covered, month_label, month_window, parse_month, period_label, previous_of, report_window,
 )
@@ -54,6 +54,9 @@ GLOSSARY = {
     "r_squared": "share of hourly variation explained by hour-of-day and weekend; low means other things drive the series",
     "pooled.weekend_effect_differs_between_series": "true when the weekend effect is not the same for all series of the family",
     "thresholds.count_over": "how many hours or days were above a health limit; allowed_per_year is the EU tolerance where one exists",
+    "busy_all_points_pct": "EV charging: share of the known time when no charging point at the station was free",
+    "state_changes": "EV charging: number of times a car arrived or left in the period",
+    "patterns.typical_day": "median of all series' fitted weekday profiles (hours 0..23) with its busiest and quietest hour; the basis for any statement about a family as a whole",
     "report.partial": "true when the report was written before the month ended; it then covers report.period_label only, while the comparison month is complete",
 }
 
@@ -151,6 +154,8 @@ def build_facts(year: int, month: int, now: datetime | None = None) -> dict:
 
     print("[FACTS] parking ...")
     cur_park, prev_park = parking.prepare_parking(start, end), parking.prepare_parking(prev_start, prev_end)
+    print("[FACTS] ev charging ...")
+    cur_ev, prev_ev = ev_charging.prepare_ev_charging(start, end), ev_charging.prepare_ev_charging(prev_start, prev_end)
     print("[FACTS] traffic ...")
     cur_tr, prev_tr = traffic.prepare_traffic(start, end), traffic.prepare_traffic(prev_start, prev_end)
     print("[FACTS] air quality ...")
@@ -160,6 +165,8 @@ def build_facts(year: int, month: int, now: datetime | None = None) -> dict:
     families = {
         "parking": _family("Parking occupancy", "fuller", "emptier", parking.VARIABLE, parking.UNIT,
                            parking.DELTA_UNIT, prev_park, cur_park, prev_ym, cur_ym),
+        "ev_charging": _family("EV charging occupancy", "busier", "less busy", ev_charging.VARIABLE,
+                               ev_charging.UNIT, ev_charging.DELTA_UNIT, prev_ev, cur_ev, prev_ym, cur_ym),
         "traffic": _family("Traffic average speed", "faster (less congested)", "slower (more congested)",
                            traffic.VARIABLE, traffic.UNIT, traffic.DELTA_UNIT, prev_tr, cur_tr, prev_ym, cur_ym),
     }
@@ -171,6 +178,7 @@ def build_facts(year: int, month: int, now: datetime | None = None) -> dict:
 
     return {
         "report": {
+            "city": "Magdeburg",
             "month": f"{year}-{month:02d}",
             "month_label": month_label(year, month),
             "partial": partial,
