@@ -224,6 +224,58 @@ def check_ev(year: int, month: int):
     return f"{len(usable)}/{len(stations)} usable; state carried forward between changes"
 
 
+@step("6f data/weather.py")
+def check_weather(year: int, month: int):
+    from data import weather
+    from data.timewindow import month_window
+    start, end = month_window(year, month)
+    period = weather.fetch_period(start, end)
+    h = period.hourly
+    assert len(h) >= 24 * 28 and list(h.columns) == weather.FIELDS, f"{len(h)} hours, {list(h.columns)}"
+    assert period.coverage["coverage_pct"] >= 90, f"DWD coverage {period.coverage['coverage_pct']}%"
+    t = h["temperature"].dropna()
+    assert -30 < t.min() and t.max() < 45, f"temperature {t.min()}..{t.max()}"
+    assert (h["precipitation"].dropna() >= 0).all(), "negative precipitation"
+    assert sum(period.observation_hours.values()) == int(h.notna().any(axis=1).sum()), "forecast rows leaked in"
+    s, e = weather.same_window_in_year(start, end, year - 5)
+    assert (e - s).days in (27, 28, 29, 30, 31) and s.year == year - 5
+    _cache["weather"] = period
+    return (f"{len(h)} h, coverage {period.coverage['coverage_pct']}%, temperature {t.min():.1f}..{t.max():.1f} °C, "
+            f"precipitation {h['precipitation'].sum():.1f} mm; observations {period.observation_hours}")
+
+
+@step("6g Statistical_models/weather.py")
+def check_weather_model(year: int, month: int):
+    from data import weather
+    from report import facts as facts_mod
+    from Statistical_models import weather as model
+    period = _cache.get("weather")
+    assert period is not None, "step 6f did not produce a period"
+    sm = model.summary(period)
+    t = sm["temperature"]
+    assert t["lowest"]["value"] <= t["mean"] <= t["highest"]["value"], t
+    assert t["hot_days_30"] <= t["summer_days_25"] <= t["days_evaluated"], t
+    assert sm["precipitation"]["wet_days_1mm"] <= sm["precipitation"]["days_evaluated"]
+    past = weather.fetch_past_years(period.start, period.end, first_year=year - 6)
+    clim = model.climate(period, past)
+    c = clim["temperature_mean"]
+    assert c and c["n_years_ranked"] == len(clim["years_used"]) + 1 and 1 <= c["rank_warmest"] <= c["n_years_ranked"]
+    json.dumps({"summary": sm, "climate": clim})
+    # a weather-service failure must not stop the report
+    original = weather.fetch_period
+    def down(*a, **k):
+        raise weather.WeatherError("simulated Bright Sky outage")
+    weather.fetch_period = down
+    try:
+        w = facts_mod._weather(period.start, period.end, period.start, period.end, (year, month), (year, month))
+    finally:
+        weather.fetch_period = original
+    assert w["available"] is False and w["reason"], w
+    return (f"mean {t['mean']} °C, summer days {t['summer_days_25']}, rain {sm['precipitation']['total_mm']} mm; "
+            f"vs {clim['window']} {clim['reference_years']}: anomaly {c['anomaly']} °C, rank {c['rank_warmest']}/"
+            f"{c['n_years_ranked']}; outage -> available false")
+
+
 # --------------------------------------------------------------------------- #
 # 7-8: the rhythm model on parking                                             #
 # --------------------------------------------------------------------------- #
@@ -289,6 +341,12 @@ def check_facts(year: int, month: int):
         td = fams[key]["patterns"]["typical_day"]
         assert td and len(td["median_profile_weekday"]) == 24 and 0 <= td["peak_hour"] <= 23, f"{key}: typical_day"
     assert facts["report"]["city"] == "Magdeburg"
+    w = facts["weather"]
+    assert w["available"], f"weather unavailable: {w.get('reason')}"
+    for part in ("patterns", "comparison", "summary", "climate", "quality", "daily", "attribution"):
+        assert part in w, f"weather.{part} missing"
+    assert w["patterns"]["series"]["Magdeburg"]["weekend_effect"] is None, "weather must not have a weekend effect"
+    assert "daily" not in slim_facts(facts)["weather"], "daily rows must not reach the LLM"
     assert len(fams["parking"]["patterns"]["series"]) >= 3 and len(fams["traffic"]["patterns"]["series"]) >= 5
     assert isinstance(facts["highlights"], list)
     path = save_facts(facts)
@@ -362,7 +420,7 @@ def check_render(month: str):
         r = facts["report"]
         report_md, source = (f"# Imidillo report, {r['month_label']}\n\nStub.\n\n## Highlights\n- h\n\n"
                              f"## Parking\n- p\n\n## EV charging\n- e\n\n## Traffic\n- t\n\n## Air quality\n- a\n\n"
-                             f"## Data quality\n- q\n\nImidillo\n"), "stub"
+                             f"## Weather\n- w\n\n## Data quality\n- q\n\nImidillo\n"), "stub"
     rendered = render(facts, report_md, with_pdf=True)
     assert rendered.subject.startswith("Imidillo report, ")
     cids = [cid for cid, _, _ in rendered.inline_images]
@@ -371,6 +429,10 @@ def check_render(month: str):
         assert f"cid:{cid}" in rendered.html, f"{cid} embedded but not referenced"
     assert rendered.html.count("<h1") == 1, "title must appear exactly once"
     assert "cid:chart-parking" in rendered.html.split("Traffic")[0], "parking chart must precede the traffic section"
+    if facts.get("weather", {}).get("available"):
+        assert "chart-weather" in cids, f"weather chart missing: {cids}"
+        if ">Weather" in rendered.html:
+            assert "cid:chart-air" in rendered.html.split(">Weather")[0], "air chart must precede the weather section"
     assert rendered.attachments and rendered.attachments[0][1][:4] == b"%PDF", "PDF attachment missing"
     path = save_rendered(rendered, month)
     kb = lambda b: f"{len(b) / 1024:.0f} KB"
@@ -447,6 +509,8 @@ def main() -> int:
     check_traffic(year, month)
     check_air(year, month)
     check_ev(year, month)
+    check_weather(year, month)
+    check_weather_model(year, month)
     check_rhythm(year, month)
     check_compare(year, month)
     check_facts(year, month)

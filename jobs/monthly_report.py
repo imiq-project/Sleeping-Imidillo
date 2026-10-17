@@ -2,7 +2,7 @@
 Monthly report job: the one entry point the systemd timer runs.
 
     timer (last Monday, 10:00) -> python -m jobs.monthly_report
-              1. facts      report/facts.py       (QuantumLeap, Orion, statistics)
+              1. facts      report/facts.py       (QuantumLeap, Orion, DWD weather, statistics)
               2. write      report/writer.py      (LLM)
               3. verify     report/verifier.py    (LLM, revise loop, cut what fails)
               4. render     report/render.py      (HTML, charts, PDF)
@@ -77,8 +77,9 @@ def run(year: int, month: int, dry_run: bool = False, to: list[str] | None = Non
         r = facts["report"]
         usable = ", ".join(f"{k} {len(f['quality']['usable'])}/{f['quality']['total']}"
                            for k, f in facts["families"].items())
+        weather_state = "ok" if facts["weather"]["available"] else f"unavailable ({facts['weather']['reason']})"
         _log("facts", f"{r['period_label']} ({r['days_covered']}/{r['days_in_month']} days); "
-                      f"usable sensors: {usable}; {len(facts['highlights'])} highlights", t0)
+                      f"usable sensors: {usable}; weather {weather_state}; {len(facts['highlights'])} highlights", t0)
 
         # 2. write
         t0 = time.perf_counter()

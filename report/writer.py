@@ -34,7 +34,9 @@ Its parts: "report" (the period covered), "highlights" (the most notable facts,
 already ranked), "families" (one per data family: parking, ev_charging, traffic,
 air_no2, air_o3, air_pm10, air_pm25), each with "patterns" (this period), "comparison"
 (versus the previous month), "quality" (what was excluded and why) and, for air
-quality, "thresholds" (health-limit exceedances). "glossary" explains the fields.
+quality, "thresholds" (health-limit exceedances). "weather" holds measurements
+of the Deutscher Wetterdienst (DWD) station Magdeburg: context for the reader,
+not one of the city's sensors. "glossary" explains the fields.
 
 Rules:
 1. Every number, hour, name, direction of change and every "significant / not
@@ -49,7 +51,7 @@ Rules:
    hour and weekday). You may quote the raw means next to it.
 5. Use each family's "unit" for values and "delta_unit" for differences, and
    its "higher_means" / "lower_means" words for direction. Hours are local
-   time, written like 11:00.
+   time, written like 11:00; dates like 13 October (never 2026-10-13).
 6. EV charging and traffic have many sensors each: say how many were usable,
    describe the typical daily pattern from "typical_day" and the weekend
    effect in general terms (use "pooled" and the comparison "summary"), and name at most three
@@ -71,6 +73,21 @@ Rules:
     say in the opening sentences that the report covers report.period_label
     (report.days_covered of report.days_in_month days) and that the comparison
     month was a full month. Do not call the period "the month" as if complete.
+12. Weather, if weather.available is true: give the period's mean, lowest and
+    highest temperature, the summer, hot, frost or ice days that are not zero,
+    the precipitation total and wet days, and the strongest gust. The change
+    of temperature versus the previous month follows rules 3 and 4
+    (weather.comparison). Then compare with the same days of earlier years
+    (weather.climate, name its window and reference_years): call the period
+    warmer, colder, wetter or drier than usual ONLY if outside_usual_range is
+    true; otherwise say it was within the usual range. You may quote the
+    anomaly and the rank. For precipitation, day counts and gusts, give both
+    months' numbers side by side without calling one more or less. Never
+    connect the weather to any other sensor's result (rule 2 applies with
+    full force: weather is not a cause you may name). End the section with
+    the line: Source: Deutscher Wetterdienst
+    If weather.available is false, leave the Weather section out and say in
+    Data quality, in one sentence, that weather data was not available.
 
 Voice: first person singular, warm, plain, honest. No marketing tone, no
 exclamation marks, no emojis. Use bold only for lot, street and station
@@ -84,9 +101,10 @@ Format: Markdown only, nothing before or after it.
   ## EV charging
   ## Traffic
   ## Air quality
+  ## Weather
   ## Data quality
   a one-line sign-off: Imidillo
-Short paragraphs and bullets. 600 to 900 words. Language: {language}.
+Short paragraphs and bullets. 650 to 1000 words. Language: {language}.
 """
 
 

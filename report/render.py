@@ -3,7 +3,8 @@ Render: approved report text -> everything the email needs.
 
   charts      PNGs drawn from facts (never from the text): one figure per
               data family (typical weekday profile + this month vs last),
-              and one 2x2 figure for the air-quality pollutants
+              one 2x2 figure for the air-quality pollutants, and one for the
+              weather (daily temperature and rain + the same days by year)
   html        the Markdown converted to email-safe HTML: inline styles only,
               a 600px table layout, avatar and charts embedded by CID (the
               one image mechanism Gmail and Outlook both show without a
@@ -171,6 +172,61 @@ def chart_air(families: dict) -> bytes | None:
     return _png(fig)
 
 
+def chart_weather(w: dict, year: int) -> bytes | None:
+    """Left: daily temperature range, mean and precipitation of the period.
+    Right: mean temperature of the same days in every reference year, the
+    usual range (mean +- one standard deviation) shaded, this year in colour."""
+    if not w.get("available") or not w.get("daily"):
+        return None
+    fig, (left, right) = plt.subplots(1, 2, figsize=(7.2, 3.2))
+    days = w["daily"]
+    x = np.arange(len(days))
+    nan = lambda v: np.nan if v is None else v                      # noqa: E731
+    lo, hi, mean = ([nan(d[k]) for d in days] for k in ("min", "max", "mean"))
+    rain = [nan(d["precipitation"]) for d in days]
+    bars = left.twinx()
+    bars.bar(x, rain, color="#9fb7c9", width=0.7, alpha=0.8)
+    bars.set_ylabel("precipitation (mm)", fontsize=7)
+    bars.set_ylim(0, max([r for r in rain if r == r] + [5]) * 3)    # bars in the lower third
+    bars.tick_params(labelsize=7)
+    left.fill_between(x, lo, hi, color=BRAND, alpha=0.15, linewidth=0)
+    left.plot(x, mean, color=BRAND, linewidth=1.8)
+    left.set_zorder(bars.get_zorder() + 1)
+    left.patch.set_visible(False)
+    step = max(1, len(days) // 8)
+    left.set_xticks(x[::step])
+    left.set_xticklabels([d["date"][8:] for d in days][::step])
+    left.set_ylabel("temperature (°C): daily range and mean", fontsize=7)
+    left.set_title(f"Weather, {w['climate']['window']}", fontsize=9)
+    _tidy(left)
+
+    clim = w["climate"]
+    t = clim.get("temperature_mean")
+    if t and clim["by_year"]:
+        years = [r["year"] for r in clim["by_year"]] + [year]
+        vals = [r["temperature_mean"] for r in clim["by_year"]] + [t["current"]]
+        right.axhspan(t["reference_mean"] - t["reference_sd"], t["reference_mean"] + t["reference_sd"],
+                      color=GREY, alpha=0.25, linewidth=0, label="usual range")
+        right.axhline(t["reference_mean"], color="#666", linewidth=0.8, linestyle="--",
+                      label=f"mean {clim['reference_years']}")
+        # points, not bars: the axis does not start at 0, and cut bars would exaggerate
+        right.plot(range(len(years) - 1), vals[:-1], color="#888", marker="o", markersize=4, linewidth=0.8)
+        right.plot([len(years) - 1], [vals[-1]], color=BRAND, marker="o", markersize=7, linestyle="none")
+        right.set_xticks(range(len(years)))
+        right.set_xticklabels([f"{y % 100:02d}" for y in years], fontsize=6)
+        spread = max(vals) - min(vals)
+        right.set_ylim(min(vals) - spread * 0.6, max(vals) + spread * 0.3)
+        right.set_ylabel("mean temperature (°C)", fontsize=7)
+        right.set_title(f"{clim['window']}, year by year", fontsize=9)
+        right.legend(fontsize=6, frameon=False, loc="upper left")
+        _tidy(right)
+    else:
+        right.set_axis_off()
+    fig.text(0.99, 0.01, "Source: Deutscher Wetterdienst", ha="right", va="bottom", fontsize=6, color="#888")
+    fig.tight_layout()
+    return _png(fig)
+
+
 # --------------------------------------------------------------------------- #
 # Markdown -> email HTML                                                       #
 # --------------------------------------------------------------------------- #
@@ -197,7 +253,7 @@ def _img(cid: str, alt: str) -> str:
             f'style="display:block;width:100%;max-width:600px;height:auto;border:1px solid #eee;"></p>')
 
 
-SECTION_ORDER = ["Highlights", "Parking", "EV charging", "Traffic", "Air quality", "Data quality"]
+SECTION_ORDER = ["Highlights", "Parking", "EV charging", "Traffic", "Air quality", "Weather", "Data quality"]
 
 
 def _insert_before_heading(html: str, heading_starts_with: str, block: str) -> str:
@@ -322,7 +378,11 @@ def render(facts: dict, report_md: str, with_pdf: bool = True) -> Rendered:
     air_png = chart_air(fams)
     if air_png:
         inline.append(("chart-air", air_png, "image/png"))
-        body = _insert_before_heading(body, "Data quality", _img("chart-air", "Air quality daily profiles"))
+        body = _insert_before_heading(body, "Weather", _img("chart-air", "Air quality daily profiles"))
+    weather_png = chart_weather(facts.get("weather") or {}, int(r["month"][:4]))
+    if weather_png:
+        inline.append(("chart-weather", weather_png, "image/png"))
+        body = _insert_before_heading(body, "Data quality", _img("chart-weather", "Weather charts"))
 
     html = _wrap(subject, body, r["generated_at"])
     attachments: list[tuple[str, bytes, str]] = []

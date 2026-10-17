@@ -38,6 +38,10 @@ FIWARE_SERVICE = _env("FIWARE_SERVICE")
 FIWARE_SERVICE_PATH = _env("FIWARE_SERVICE_PATH")
 QL_TIMEOUT_S = _env_int("QL_TIMEOUT_S", 60)
 
+# Weather: DWD measurements via Bright Sky (free, no key); not part of the twin
+BRIGHTSKY_BASE_URL = _env("BRIGHTSKY_BASE_URL", "https://api.brightsky.dev")
+BRIGHTSKY_TIMEOUT_S = _env_int("BRIGHTSKY_TIMEOUT_S", 30)
+
 # LLM       
 OPENAI_API_KEY = _env("OPENAI_API_KEY")
 OPENAI_BASE_URL = _env("OPENAI_BASE_URL", "https://api.openai.com/v1")

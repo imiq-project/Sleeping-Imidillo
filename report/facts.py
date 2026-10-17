@@ -16,6 +16,11 @@ Structure:
                   quality    (usable / excluded / silent / notes)
                   thresholds (air quality only: limit exceedances)
                 Families today: parking, ev_charging, traffic, air_no2, air_o3, air_pm10, air_pm25
+  weather       context, NOT the twin's data: DWD station Magdeburg (data/weather.py) with
+                patterns/comparison (temperature, rhythm model, all days pooled), summary
+                (climate days, precipitation, wind), climate (same days of earlier years)
+                and daily rows for the chart; {"available": false, "reason": ...} when the
+                weather service could not be reached, so the report still goes out
   glossary      meaning of the recurring field names
 
 Run manually:
@@ -32,11 +37,12 @@ from pathlib import Path
 from zoneinfo import ZoneInfo
 
 import config
-from data import air_quality, ev_charging, parking, traffic
+from data import air_quality, ev_charging, parking, traffic, weather
 from data.timewindow import (
     days_covered, month_label, month_window, parse_month, period_label, previous_of, report_window,
 )
 from Statistical_models import thresholds
+from Statistical_models import weather as weather_model
 from Statistical_models.rhythm import RhythmSeries, analyse_rhythm, compare_rhythm, quality
 
 GLOSSARY = {
@@ -60,6 +66,12 @@ GLOSSARY = {
     "state_changes": "EV charging: number of times a car arrived or left in the period",
     "patterns.typical_day": "median of all series' fitted weekday profiles (hours 0..23) with its busiest and quietest hour; the basis for any statement about a family as a whole",
     "report.partial": "true when the report was written before the month ended; it then covers report.period_label only, while the comparison month is complete",
+    "weather": "measured by the Deutscher Wetterdienst at its Magdeburg station, not by the city's sensors; context only, never a cause of anything in the other families",
+    "weather.summary.temperature.summer_days_25 / hot_days_30 / frost_days / ice_days": "days with a maximum of at least 25 / at least 30 °C, a minimum below 0 °C, a maximum below 0 °C (from hourly values)",
+    "weather.summary.precipitation.wet_days_1mm": "days with at least 1.0 mm of precipitation",
+    "weather.climate": "this period against the same calendar days (climate.window) of every reference year; anomaly = current minus reference_mean",
+    "weather.climate.*.outside_usual_range": "true when the period is more than one standard deviation (reference_sd) away from the reference mean; only then is it warmer/colder or wetter/drier than usual",
+    "weather.climate.*.rank_warmest / rank_wettest": "position of this period among all n_years_ranked years including itself, 1 = warmest / wettest",
 }
 
 
@@ -88,12 +100,57 @@ def _air_thresholds(stations: dict[str, RhythmSeries], attr: str) -> dict:
     return {k: thresholds.exceedances(s.values, attr) for k, s in stations.items() if s.usable}
 
 
+def _weather(start, end, prev_start, prev_end, prev_ym: tuple[int, int], cur_ym: tuple[int, int]) -> dict:
+    """Weather context from the DWD. A weather-service failure must not stop
+    the report: the facts then say the weather was unavailable and why."""
+    base = {"source": weather.SOURCE, "attribution": weather.ATTRIBUTION}
+    try:
+        cur = weather.fetch_period(start, end)
+        prev = weather.fetch_period(prev_start, prev_end)
+        past = weather.fetch_past_years(start, end)
+    except weather.WeatherError as e:
+        print(f"[FACTS] WARNING: weather unavailable, reporting without it ({e})")
+        return {**base, "available": False, "reason": "the weather service could not be reached"}
+    cur_s, prev_s = weather.temperature_series(cur), weather.temperature_series(prev)
+    kw = {"variable": weather.VARIABLE, "unit": weather.UNIT, "delta_unit": weather.DELTA_UNIT,
+          "weekend": False, "hac_lags": weather_model.HAC_LAGS}
+    return {
+        **base,
+        "available": True,
+        "label": "Weather",
+        "variable": weather.VARIABLE,
+        "unit": weather.UNIT,
+        "delta_unit": weather.DELTA_UNIT,
+        "higher_means": "warmer",
+        "lower_means": "colder",
+        "patterns": analyse_rhythm(cur_s, year=cur_ym[0], month=cur_ym[1], **kw),
+        "comparison": compare_rhythm(prev_s, cur_s, prev_ym, cur_ym, **kw),
+        "summary": {"current": weather_model.summary(cur), "previous": weather_model.summary(prev)},
+        "climate": weather_model.climate(cur, past),
+        "quality": {"coverage_pct": cur.coverage["coverage_pct"], "longest_gap_h": cur.coverage["longest_gap_h"],
+                    "observation_hours": cur.observation_hours},
+        "daily": weather_model.daily(cur),
+    }
+
+
 # --------------------------------------------------------------------------- #
 # Highlights: ranked deterministically, no LLM                                 #
 # --------------------------------------------------------------------------- #
 
-def _highlights(families: dict, limit: int = 6) -> list[dict]:
+def _highlights(families: dict, weather_facts: dict | None = None, limit: int = 6) -> list[dict]:
     items = []
+    clim = (weather_facts or {}).get("climate") or {}
+    for key, word in (("temperature_mean", ("warmer", "colder")), ("precipitation_total_mm", ("wetter", "drier"))):
+        c = clim.get(key)
+        if c and c["outside_usual_range"]:
+            items.append({
+                "kind": "weather_unusual", "family": "weather", "family_label": "Weather",
+                "series": key, "name": f"DWD station {weather.STATION_NAME}", "window": clim["window"],
+                "reference_years": clim["reference_years"], "current": c["current"],
+                "reference_mean": c["reference_mean"], "anomaly": c["anomaly"],
+                "direction": (word[0] if c["anomaly"] > 0 else word[1]) + " than usual",
+                "strength": round(5 + 2 * abs(c["z"]), 1),
+            })
     for fkey, fam in families.items():
         for skey, c in fam["comparison"]["series"].items():
             a = c["adjusted_shift"]
@@ -163,6 +220,9 @@ def build_facts(year: int, month: int, now: datetime | None = None) -> dict:
     print("[FACTS] air quality ...")
     cur_air, prev_air = air_quality.prepare_air_quality(start, end), air_quality.prepare_air_quality(prev_start, prev_end)
 
+    print("[FACTS] weather (DWD) ...")
+    weather_facts = _weather(start, end, prev_start, prev_end, prev_ym, cur_ym)
+
     print("[FACTS] models ...")
     families = {
         "parking": _family("Parking occupancy", "fuller", "emptier", parking.VARIABLE, parking.UNIT,
@@ -194,8 +254,9 @@ def build_facts(year: int, month: int, now: datetime | None = None) -> dict:
             "generated_at": datetime.now(ZoneInfo(config.LOCAL_TZ)).strftime("%Y-%m-%d %H:%M %Z"),
             "families": list(families),
         },
-        "highlights": _highlights(families),
+        "highlights": _highlights(families, weather_facts),
         "families": families,
+        "weather": weather_facts,
         "glossary": GLOSSARY,
     }
 
@@ -204,10 +265,13 @@ def slim_facts(facts: dict) -> dict:
     """The copy the LLMs get: without the 24-hour profiles (they are for the
     charts) so the prompt stays small."""
     slim = copy.deepcopy(facts)
-    for fam in slim["families"].values():
+    weather_facts = slim.get("weather") or {}
+    fams = list(slim["families"].values()) + ([weather_facts] if weather_facts.get("available") else [])
+    for fam in fams:
         for s in fam["patterns"]["series"].values():
             s.pop("profile_weekday", None)
             s.pop("profile_weekend", None)
+    weather_facts.pop("daily", None)
     return slim
 
 
@@ -241,6 +305,14 @@ def main() -> int:
         q, c = fam["quality"], fam["comparison"]["summary"]
         print(f"[FACTS] {key:10s} {len(q['usable'])}/{q['total']} usable, {len(fam['patterns']['series'])} modelled, "
               f"{c['series_compared']} compared: higher {c['significantly_higher'] or '-'}, lower {c['significantly_lower'] or '-'}")
+    w = facts["weather"]
+    if w["available"]:
+        t, c = w["summary"]["current"]["temperature"], w["climate"]["temperature_mean"] or {}
+        print(f"[FACTS] weather    mean {t['mean']} °C, summer days {t['summer_days_25']}; vs {w['climate']['window']} "
+              f"{w['climate']['reference_years']}: anomaly {c.get('anomaly')} °C, rank {c.get('rank_warmest')}"
+              f"/{c.get('n_years_ranked')}, outside usual range {c.get('outside_usual_range')}")
+    else:
+        print(f"[FACTS] weather    unavailable: {w['reason']}")
     print(f"[FACTS] highlights: {[(h['kind'], h['family'], h['series']) for h in facts['highlights']]}")
     print(f"[FACTS] written {path} ({path.stat().st_size / 1024:.1f} KB; slim for LLM "
           f"{len(json.dumps(slim_facts(facts))) / 1024:.1f} KB)")

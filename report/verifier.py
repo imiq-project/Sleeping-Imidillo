@@ -46,9 +46,12 @@ Skip sentences with nothing checkable: headings, greetings, the sign-off,
 
 Conventions that ARE supported: "13.7 points emptier" for -13.7; "no
 measurable change" for significant: false; "36%" for 36.0; hours as 11:00
-for peak_hour 11; a lot's "name" value instead of its key. Reasons that FACTS
+for peak_hour 11; "13 October at 05:00" for "2026-10-13 05:00"; a lot's
+"name" value instead of its key. Reasons that FACTS
 itself states (capacity_note, exclusion reasons in data_quality, report.partial
-and report.period_label) are supported, not "causes". Do not invent
+and report.period_label) are supported, not "causes". The line "Source:
+Deutscher Wetterdienst" is supported by weather.attribution. A sentence that
+links the weather to another sensor's result is a cause: unsupported. Do not invent
 leniency beyond this: when in doubt, unsupported.
 Return JSON matching the schema, nothing else.
 """

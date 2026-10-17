@@ -78,10 +78,12 @@ class RhythmSeries:
 # Fitting one series                                                           #
 # --------------------------------------------------------------------------- #
 
-def _frame(s: RhythmSeries) -> pd.DataFrame:
+def _frame(s: RhythmSeries, weekend: bool = True) -> pd.DataFrame:
+    """weekend=False pools all days into one day type (weather does not
+    follow the week); the single profile is then stored as profile_weekday."""
     df = s.values.dropna().to_frame("y")
     df["hour"] = df.index.hour
-    df["is_weekend"] = (df.index.dayofweek >= 5).astype(int)
+    df["is_weekend"] = (df.index.dayofweek >= 5).astype(int) if weekend else 0
     df["cell"] = df["is_weekend"].map({0: "wd", 1: "we"}) + df["hour"].map("{:02d}".format)
     return df
 
@@ -91,7 +93,7 @@ def _cell(day: str, hour: int) -> str:
     return f"C(cell)[{day}{hour:02d}]"
 
 
-def _fit(df: pd.DataFrame):
+def _fit(df: pd.DataFrame, hac_lags: int = HAC_MAXLAGS):
     """One mean per hour and day type: y ~ C(hour) * is_weekend in cell-means
     form. Cells with fewer than MIN_CELL values are left out, so a lone
     reading cannot become the peak of the day."""
@@ -101,7 +103,7 @@ def _fit(df: pd.DataFrame):
     ols = model.fit()
     dw = float(durbin_watson(ols.resid))
     r2 = 1.0 - float(ols.ssr) / float(((df["y"] - df["y"].mean()) ** 2).sum())
-    fit = model.fit(cov_type="HAC", cov_kwds={"maxlags": HAC_MAXLAGS})
+    fit = model.fit(cov_type="HAC", cov_kwds={"maxlags": hac_lags})
     return fit, dw, r2
 
 
@@ -180,8 +182,8 @@ def _hours_off_midnight(fit) -> int | None:
     return int((np.asarray(fit.t_test(rows).pvalue) < ALPHA).sum())
 
 
-def _series_facts(s: RhythmSeries, df: pd.DataFrame, decimals: int) -> dict:
-    fit, dw, r2 = _fit(df)
+def _series_facts(s: RhythmSeries, df: pd.DataFrame, decimals: int, hac_lags: int = HAC_MAXLAGS) -> dict:
+    fit, dw, r2 = _fit(df, hac_lags)
     weekday, weekend = _profile(fit, "wd", decimals), _profile(fit, "we", decimals)
     wd, we = _extremes(weekday), _extremes(weekend)
     facts = {
@@ -251,18 +253,30 @@ def _typical_day(modelled: dict[str, dict], decimals: int) -> dict | None:
 
 
 def analyse_rhythm(series: dict[str, RhythmSeries], *, year: int, month: int,
-                   variable: str, unit: str, delta_unit: str, decimals: int = 1) -> dict:
+                   variable: str, unit: str, delta_unit: str, decimals: int = 1,
+                   weekend: bool = True, hac_lags: int = HAC_MAXLAGS) -> dict:
+    """weekend=False: one profile for all days, no weekend effect (weather).
+    hac_lags: Newey-West lags; longer for series whose anomalies last days."""
     modelled, frames, skipped = {}, {}, {}
     for key, s in series.items():
         if not s.usable:
             skipped[key] = s.exclude_reason
             continue
-        df = _frame(s)
+        df = _frame(s, weekend)
         if len(df) < MIN_HOURS:
             skipped[key] = f"only {len(df)} hourly values, need {MIN_HOURS}"
             continue
         frames[key] = df
-        modelled[key] = _series_facts(s, df, decimals)
+        modelled[key] = _series_facts(s, df, decimals, hac_lags)
+    if weekend:
+        method = (f"Per series: OLS of hourly {variable} on hour x day-type (weekday/weekend) cells, i.e. "
+                  f"C(hour) * is_weekend; cells with fewer than {MIN_CELL} values are left out. Newey-West "
+                  f"(HAC, {hac_lags} lags) standard errors, alpha 0.05. Weekend effect = weekend minus weekday "
+                  "averaged over the hours. Pooled: series x weekend interaction, joint Wald chi-square test.")
+    else:
+        method = (f"Per series: OLS of hourly {variable} on hour-of-day, all days pooled (no weekday/weekend "
+                  f"split); hours with fewer than {MIN_CELL} values are left out. Newey-West (HAC, {hac_lags} "
+                  "lags) standard errors, alpha 0.05. profile_weekday holds the profile of all days.")
     return {
         "variable": variable,
         "unit": unit,
@@ -270,13 +284,10 @@ def analyse_rhythm(series: dict[str, RhythmSeries], *, year: int, month: int,
         "month": f"{year}-{month:02d}",
         "month_label": month_label(year, month),
         "timezone": config.LOCAL_TZ,
-        "method": (f"Per series: OLS of hourly {variable} on hour x day-type (weekday/weekend) cells, i.e. "
-                   f"C(hour) * is_weekend; cells with fewer than {MIN_CELL} values are left out. Newey-West "
-                   "(HAC, 24 lags) standard errors, alpha 0.05. Weekend effect = weekend minus weekday "
-                   "averaged over the hours. Pooled: series x weekend interaction, joint Wald chi-square test."),
+        "method": method,
         "series": modelled,
         "skipped": skipped,
-        "pooled": _pooled(frames),
+        "pooled": _pooled(frames) if weekend else None,
         "typical_day": _typical_day(modelled, decimals),
     }
 
@@ -285,27 +296,28 @@ def analyse_rhythm(series: dict[str, RhythmSeries], *, year: int, month: int,
 # Public: this month versus the previous one                                   #
 # --------------------------------------------------------------------------- #
 
-def _shift(df: pd.DataFrame, decimals: int) -> dict:
-    fit = smf.ols("y ~ C(cell) + is_current", data=df).fit(cov_type="HAC", cov_kwds={"maxlags": HAC_MAXLAGS})
+def _shift(df: pd.DataFrame, decimals: int, hac_lags: int = HAC_MAXLAGS) -> dict:
+    fit = smf.ols("y ~ C(cell) + is_current", data=df).fit(cov_type="HAC", cov_kwds={"maxlags": hac_lags})
     return _effect(fit, "is_current", decimals)
 
 
-def _weekend_change(df: pd.DataFrame, decimals: int) -> dict | None:
+def _weekend_change(df: pd.DataFrame, decimals: int, hac_lags: int = HAC_MAXLAGS) -> dict | None:
     per_month = df.groupby("is_current")["is_weekend"].nunique()
     if len(per_month) < 2 or (per_month < 2).any():
         return None
     fit = smf.ols("y ~ C(cell) + is_current + is_current:is_weekend",
-                  data=df).fit(cov_type="HAC", cov_kwds={"maxlags": HAC_MAXLAGS})
+                  data=df).fit(cov_type="HAC", cov_kwds={"maxlags": hac_lags})
     return _effect(fit, "is_current:is_weekend", decimals)
 
 
 def compare_rhythm(prev: dict[str, RhythmSeries], cur: dict[str, RhythmSeries],
                    prev_ym: tuple[int, int], cur_ym: tuple[int, int], *,
-                   variable: str, unit: str, delta_unit: str, decimals: int = 1) -> dict:
-    prev_f = analyse_rhythm(prev, year=prev_ym[0], month=prev_ym[1], variable=variable,
-                            unit=unit, delta_unit=delta_unit, decimals=decimals)["series"]
-    cur_f = analyse_rhythm(cur, year=cur_ym[0], month=cur_ym[1], variable=variable,
-                           unit=unit, delta_unit=delta_unit, decimals=decimals)["series"]
+                   variable: str, unit: str, delta_unit: str, decimals: int = 1,
+                   weekend: bool = True, hac_lags: int = HAC_MAXLAGS) -> dict:
+    opts = {"variable": variable, "unit": unit, "delta_unit": delta_unit, "decimals": decimals,
+            "weekend": weekend, "hac_lags": hac_lags}
+    prev_f = analyse_rhythm(prev, year=prev_ym[0], month=prev_ym[1], **opts)["series"]
+    cur_f = analyse_rhythm(cur, year=cur_ym[0], month=cur_ym[1], **opts)["series"]
     compared, not_comparable = {}, {}
     for key in sorted(set(prev) | set(cur)):
         if key not in cur_f and key not in prev_f:
@@ -315,7 +327,8 @@ def compare_rhythm(prev: dict[str, RhythmSeries], cur: dict[str, RhythmSeries],
         elif key not in prev_f:
             not_comparable[key] = "not modelled last month, nothing to compare against"
         else:
-            df = pd.concat([_frame(prev[key]).assign(is_current=0), _frame(cur[key]).assign(is_current=1)])
+            df = pd.concat([_frame(prev[key], weekend).assign(is_current=0),
+                            _frame(cur[key], weekend).assign(is_current=1)])
             p, c = prev_f[key], cur_f[key]
             compared[key] = {
                 "name": c["name"],
@@ -323,11 +336,11 @@ def compare_rhythm(prev: dict[str, RhythmSeries], cur: dict[str, RhythmSeries],
                 "coverage_pct": {"previous": p["coverage_pct"], "current": c["coverage_pct"]},
                 "mean": {"previous": p["mean"], "current": c["mean"],
                          "change": round(c["mean"] - p["mean"], decimals)},
-                "adjusted_shift": _shift(df, decimals),
+                "adjusted_shift": _shift(df, decimals, hac_lags),
                 "weekend_effect": {
                     "previous": p["weekend_effect"]["delta"] if p["weekend_effect"] else None,
                     "current": c["weekend_effect"]["delta"] if c["weekend_effect"] else None,
-                    "change": _weekend_change(df, decimals),
+                    "change": _weekend_change(df, decimals, hac_lags),
                 },
                 "peak": {"previous": {"hour": p["peak_hour"], "value": p["peak_value"]},
                          "current": {"hour": c["peak_hour"], "value": c["peak_value"]}},
@@ -344,8 +357,11 @@ def compare_rhythm(prev: dict[str, RhythmSeries], cur: dict[str, RhythmSeries],
         "previous_month": f"{prev_ym[0]}-{prev_ym[1]:02d}",
         "previous_month_label": month_label(*prev_ym),
         "method": (f"Both months stacked; {variable} ~ C(hour x day type) + is_current with Newey-West "
-                   "(HAC, 24 lags) errors. is_current = change at equal hour and day type. Weekend change "
-                   "from the is_current:is_weekend interaction. alpha 0.05."),
+                   f"(HAC, {hac_lags} lags) errors. is_current = change at equal hour and day type. Weekend "
+                   "change from the is_current:is_weekend interaction. alpha 0.05."
+                   if weekend else
+                   f"Both months stacked; {variable} ~ C(hour) + is_current with Newey-West (HAC, "
+                   f"{hac_lags} lags) errors. is_current = change at equal hour of day. alpha 0.05."),
         "summary": {
             "series_compared": len(compared),
             "significantly_higher": higher,
